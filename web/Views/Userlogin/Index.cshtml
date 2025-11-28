@@ -1,0 +1,295 @@
+﻿@{
+    ViewData["Title"] = "Login Page";
+}
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+<div class="login-wrapper">
+    <div class="sidebar">
+        <h3>Login As</h3>
+        <button class="login-type-btn active" data-type="user">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            User Login
+        </button>
+        <button class="login-type-btn" data-type="admin">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            Admin Login
+        </button>
+        <button class="login-type-btn" data-type="ngo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            NGO Login
+        </button>
+    </div>
+
+    <div class="logincontainer">
+        <form asp-action="Index" method="post">
+            <h2 id="login-title">User Login</h2>
+            <input type="hidden" id="loginType" name="LoginType" value="user">
+
+            <div class="input-group">
+                <label for="UserID">User ID</label>
+                <input type="text" name="UserID" placeholder="Enter User ID" required>
+            </div>
+            <div class="input-group">
+                <label for="Password">Password</label>
+                <input type="password" name="Password" placeholder="Enter Password" required>
+            </div>
+            <button type="submit">Login</button>
+            <div class="register-link">
+                Don't have an account? <a asp-controller="UserLogin" asp-action="Register">Register here</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    .login-wrapper {
+        display: flex;
+        gap: 30px;
+        align-items: stretch;
+    }
+
+    .sidebar {
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(10px);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .sidebar h3 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            margin-top: 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+    .login-type-btn {
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 12px;
+        border: 2px solid transparent;
+        background: rgba(255, 255, 255, 0.6);
+        color: #34495e;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+    }
+
+        .login-type-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(5px);
+        }
+
+        .login-type-btn.active {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            border-color: #2575fc;
+            box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
+        }
+
+        .login-type-btn svg {
+            flex-shrink: 0;
+        }
+
+    .logincontainer {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(10px);
+        width: 380px;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+        .logincontainer h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            margin-top: 0;
+            color: #2d3436;
+        }
+
+    .input-group {
+        margin-bottom: 18px;
+    }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #34495e;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+            .input-group input:focus {
+                box-shadow: 0 0 0 2px #6ab0ff;
+            }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+        }
+
+    .register-link {
+        text-align: center;
+        margin-top: 20px;
+        color: #34495e;
+        font-size: 14px;
+    }
+
+        .register-link a {
+            color: #2575fc;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+            .register-link a:hover {
+                text-decoration: underline;
+                color: #6a11cb;
+            }
+
+    .alert-danger {
+        background: #fee;
+        color: #c33;
+        border: 1px solid #fcc;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Make sure this is inside the @@media block so it only applies on small screens */
+    @@media (max-width: 768px) {
+        body
+
+    {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .login-wrapper {
+        flex-direction: column;
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .logincontainer {
+        width: 100%;
+    }
+
+    }
+</style>
+
+<script>
+    /*
+    Pseudocode / Plan:
+    - On DOMContentLoaded, find all .login-type-btn buttons, the hidden #loginType input, the #login-title element,
+      the label for UserID, the UserID input, and the .register-link container.
+    - Map each type ("user","admin","ngo") to a title, ID label text, and placeholder text.
+    - Add click listeners to each button:
+        - remove .active from all buttons and add to clicked one
+        - set hidden input value to clicked button data-type
+        - update the title text
+        - update the ID label and placeholder
+        - hide the Register link for admin, show for user/ngo
+    - Ensure graceful fallback if elements are missing.
+    */
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = Array.from(document.querySelectorAll('.login-type-btn'));
+        const loginTypeInput = document.getElementById('loginType');
+        const loginTitle = document.getElementById('login-title');
+        const userIdLabel = document.querySelector('label[for="UserID"]');
+        const userIdInput = document.querySelector('input[name="UserID"]');
+        const registerLink = document.querySelector('.register-link');
+
+        const titleMap = { user: 'User Login', admin: 'Admin Login', ngo: 'NGO Login' };
+        const idLabelMap = { user: 'User ID', admin: 'Admin ID', ngo: 'NGO ID' };
+        const placeholderMap = { user: 'Enter User ID', admin: 'Enter Admin ID', ngo: 'Enter NGO ID' };
+
+        function applyType(type) {
+            if (loginTypeInput) loginTypeInput.value = type;
+            if (loginTitle) loginTitle.textContent = titleMap[type] || 'User Login';
+            if (userIdLabel) userIdLabel.textContent = idLabelMap[type] || 'User ID';
+            if (userIdInput) userIdInput.placeholder = placeholderMap[type] || 'Enter User ID';
+            if (registerLink) registerLink.style.display = (type === 'admin') ? 'none' : 'block';
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                buttons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const type = this.dataset.type || 'user';
+                applyType(type);
+            });
+        });
+
+        // Initialize to value in hidden input or active button
+        const initial = (loginTypeInput && loginTypeInput.value) ||
+                        (buttons.find(b => b.classList.contains('active')) || {}).dataset?.type ||
+                        'user';
+        applyType(initial);
+    });
+</script>
