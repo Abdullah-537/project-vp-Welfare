@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Donor Dashboard";
-    var userName = ViewBag.UserName ?? "Donor";
 }
 
 <!DOCTYPE html>
@@ -9,285 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert-success-toast">@TempData["Success"]</div>
-    }
-
-    <div class="dashboard-wrapper">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                    <h2>Welfare Portal</h2>
-                </div>
-                <div class="user-info">
-                    <div class="user-avatar">@userName.Substring(0, 1).ToUpper()</div>
-                    <div class="user-details">
-                        <p class="user-name">@userName</p>
-                        <p class="user-role">Donor</p>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" data-section="home">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                    Home
-                </a>
-                <a href="#" class="nav-item" data-section="personal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    Personal Information
-                </a>
-                <a href="#" class="nav-item" data-section="donate">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                    Donate
-                </a>
-                <a href="@Url.Action("Logout", "UserLogin")" class="nav-item logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    Logout
-                </a>
-            </nav>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Home Section -->
-            <div class="content-section active" id="home-section">
-                <div class="welcome-header">
-                    <h1>Welcome, @userName!</h1>
-                    <p>Thank you for being a part of our mission to help those in need.</p>
-                </div>
-
-                <div class="welfare-intro">
-                    <div class="intro-card">
-                        <div class="intro-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        </div>
-                        <h2>Our Mission</h2>
-                        <p>We are dedicated to connecting generous donors like you with those who need support the most. Our welfare platform ensures transparency, efficiency, and direct impact in making a difference in people's lives.</p>
-                    </div>
-
-                    <div class="intro-card">
-                        <div class="intro-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                        </div>
-                        <h2>Why Donate?</h2>
-                        <p>Your contributions help provide essential resources including food, education, healthcare, and shelter to families in need. Every donation, no matter the size, creates a ripple effect of positive change in our community.</p>
-                    </div>
-
-                    <div class="intro-card">
-                        <div class="intro-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 6v6l4 2"></path>
-                            </svg>
-                        </div>
-                        <h2>Impact & Transparency</h2>
-                        <p>We believe in complete transparency. Track your donations, see real-time updates on how your contributions are being used, and receive detailed reports on the impact you're making in the community.</p>
-                    </div>
-                </div>
-
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <h3>1,500+</h3>
-                        <p>Families Helped</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>500+</h3>
-                        <p>Active Donors</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>PKR 5M+</h3>
-                        <p>Total Donations</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>50+</h3>
-                        <p>Partner NGOs</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Personal Information Section -->
-            <div class="content-section" id="personal-section">
-                <h1>Personal Information</h1>
-                <div class="info-container">
-                    <div class="info-card">
-                        <h3>Profile Details</h3>
-                        <div class="info-row">
-                            <label>Full Name:</label>
-                            <span>@ViewBag.FullName</span>
-                        </div>
-                        <div class="info-row">
-                            <label>User ID:</label>
-                            <span>@ViewBag.UserId</span>
-                        </div>
-                        <div class="info-row">
-                            <label>Email:</label>
-                            <span>@ViewBag.Email</span>
-                        </div>
-                        <div class="info-row">
-                            <label>Phone:</label>
-                            <span>@ViewBag.Phone</span>
-                        </div>
-                        <div class="info-row">
-                            <label>CNIC:</label>
-                            <span>@ViewBag.CNIC</span>
-                        </div>
-                        <div class="info-row">
-                            <label>Date of Birth:</label>
-                            <span>@ViewBag.DateOfBirth</span>
-                        </div>
-                        <div class="info-row">
-                            <label>Gender:</label>
-                            <span>@ViewBag.Gender</span>
-                        </div>
-                        <div class="info-row">
-                            <label>Address:</label>
-                            <span>@ViewBag.Address</span>
-                        </div>
-                        <div class="info-row">
-                            <label>City:</label>
-                            <span>@ViewBag.City</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Donate Section -->
-            <div class="content-section" id="donate-section">
-                <h1>Make a Donation</h1>
-                <div class="donate-container">
-                    <form asp-action="ProcessDonation" asp-controller="Donation" method="post">
-                        <div class="donation-card">
-                            <h3>Choose Donation Type</h3>
-                            <div class="donation-types">
-                                <label class="donation-type-option">
-                                    <input type="radio" name="DonationType" value="Money" required>
-                                    <div class="option-content">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                        </svg>
-                                        <span>Money</span>
-                                    </div>
-                                </label>
-                                <label class="donation-type-option">
-                                    <input type="radio" name="DonationType" value="Food" required>
-                                    <div class="option-content">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                                            <line x1="6" y1="1" x2="6" y2="4"></line>
-                                            <line x1="10" y1="1" x2="10" y2="4"></line>
-                                            <line x1="14" y1="1" x2="14" y2="4"></line>
-                                        </svg>
-                                        <span>Food</span>
-                                    </div>
-                                </label>
-                                <label class="donation-type-option">
-                                    <input type="radio" name="DonationType" value="Clothes" required>
-                                    <div class="option-content">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
-                                        </svg>
-                                        <span>Clothes</span>
-                                    </div>
-                                </label>
-                                <label class="donation-type-option">
-                                    <input type="radio" name="DonationType" value="Other" required>
-                                    <div class="option-content">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                                        </svg>
-                                        <span>Other</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="donation-card">
-                            <h3>Donation Details</h3>
-                            <div class="input-group">
-                                <label>Amount / Quantity</label>
-                                <input type="text" name="Amount" placeholder="Enter amount or quantity" required>
-                            </div>
-                            <div class="input-group">
-                                <label>Description (Optional)</label>
-                                <textarea name="Description" rows="4" placeholder="Add any additional details about your donation"></textarea>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="donate-btn">Submit Donation</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navItems = document.querySelectorAll('.nav-item:not(.logout)');
-            const sections = document.querySelectorAll('.content-section');
-
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Remove active class from all nav items and sections
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    sections.forEach(section => section.classList.remove('active'));
-
-                    // Add active class to clicked nav item
-                    this.classList.add('active');
-
-                    // Show corresponding section
-                    const sectionId = this.dataset.section + '-section';
-                    document.getElementById(sectionId).classList.add('active');
-
-                    // Scroll to top of content
-                    document.querySelector('.main-content').scrollTop = 0;
-                });
-            });
-
-            // Auto-hide success toast after 5 seconds
-            const successToast = document.querySelector('.alert-success-toast');
-            if (successToast) {
-                setTimeout(() => {
-                    successToast.remove();
-                }, 5000);
-            }
-        });
-    </script>
-
     <style>
         * {
             margin: 0;
@@ -296,452 +16,643 @@
         }
 
         body {
-            font-family: "Poppins", sans-serif;
-            background: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-text p {
+            color: #666;
+        }
+
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: #d32f2f;
+            }
+
+        .tabs-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
         }
 
-        /* Success Toast Notification */
-        .alert-success-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.3);
-            z-index: 9999;
-            animation: slideInRight 0.4s ease-out, fadeOut 0.3s ease-in 4.7s forwards;
-            font-weight: 500;
-        }
-
-        @@keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @@keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateX(400px);
-            }
-        }
-
-        .dashboard-wrapper {
+        .tabs {
             display: flex;
-            height: 100vh;
+            background: #f5f5f5;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-header {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-            .logo svg {
-                fill: white;
-            }
-
-            .logo h2 {
-                font-size: 20px;
-                font-weight: 600;
-            }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .user-details {
+        .tab {
             flex: 1;
-        }
-
-        .user-name {
-            font-size: 15px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 16px;
             font-weight: 600;
-        }
-
-        .user-role {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 20px 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 25px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
+            color: #666;
             transition: all 0.3s;
-            font-size: 15px;
-            border-left: 3px solid transparent;
         }
 
-            .nav-item:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: white;
-                border-left-color: white;
+            .tab.active {
+                background: white;
+                color: #667eea;
+                border-bottom: 3px solid #667eea;
             }
 
-            .nav-item.active {
-                background: rgba(255, 255, 255, 0.15);
-                color: white;
-                border-left-color: white;
-                font-weight: 600;
+            .tab:hover {
+                background: #eeeeee;
             }
 
-            .nav-item.logout {
-                margin-top: auto;
-                color: #ffcccb;
-            }
-
-                .nav-item.logout:hover {
-                    background: rgba(255, 0, 0, 0.1);
-                    border-left-color: #ffcccb;
-                }
-
-        /* Main Content Styles */
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            background: #f5f7fa;
-        }
-
-        .content-section {
+        .tab-content {
             display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s;
         }
 
-            .content-section.active {
+            .tab-content.active {
                 display: block;
-                animation: fadeIn 0.4s ease;
             }
 
         @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+            from
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        {
+            opacity: 0;
+            transform: translateY(10px);
         }
 
-        .welcome-header {
-            margin-bottom: 40px;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-            .welcome-header h1 {
-                font-size: 32px;
-                color: #2d3436;
-                margin-bottom: 8px;
-            }
+        }
 
-            .welcome-header p {
-                font-size: 16px;
-                color: #636e72;
-            }
-
-        .welfare-intro {
+        .profile-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .intro-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-            .intro-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            }
-
-        .intro-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-            .intro-icon svg {
-                stroke: white;
-            }
-
-        .intro-card h2 {
-            font-size: 22px;
-            color: #2d3436;
-            margin-bottom: 15px;
-        }
-
-        .intro-card p {
-            color: #636e72;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
         }
 
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        .profile-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
         }
 
-            .stat-card h3 {
-                font-size: 36px;
-                margin-bottom: 8px;
-            }
-
-            .stat-card p {
-                font-size: 14px;
-                opacity: 0.9;
-            }
-
-        /* Personal Information Styles */
-        .info-container {
-            max-width: 800px;
-        }
-
-        .info-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-            .info-card h3 {
-                font-size: 22px;
-                color: #2d3436;
-                margin-bottom: 25px;
-                padding-bottom: 15px;
-                border-bottom: 2px solid #f0f0f0;
-            }
-
-        .info-row {
-            display: flex;
-            padding: 15px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-            .info-row:last-child {
-                border-bottom: none;
-            }
-
-            .info-row label {
-                font-weight: 600;
-                color: #2d3436;
-                width: 180px;
-                flex-shrink: 0;
-            }
-
-            .info-row span {
-                color: #636e72;
-            }
-
-        /* Donation Styles */
-        .donate-container {
-            max-width: 800px;
-        }
-
-        .donation-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-        }
-
-            .donation-card h3 {
-                font-size: 20px;
-                color: #2d3436;
-                margin-bottom: 20px;
-            }
-
-        .donation-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .donation-type-option {
-            cursor: pointer;
-        }
-
-            .donation-type-option input[type="radio"] {
-                display: none;
-            }
-
-        .option-content {
-            padding: 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-            .option-content svg {
-                stroke: #636e72;
-                margin-bottom: 10px;
-                transition: all 0.3s;
-            }
-
-            .option-content span {
+            .profile-item label {
                 display: block;
-                font-weight: 500;
-                color: #636e72;
-                transition: all 0.3s;
-            }
-
-        .donation-type-option input[type="radio"]:checked + .option-content {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        }
-
-            .donation-type-option input[type="radio"]:checked + .option-content svg {
-                stroke: #667eea;
-            }
-
-            .donation-type-option input[type="radio"]:checked + .option-content span {
-                color: #667eea;
+                color: #666;
+                font-size: 13px;
+                margin-bottom: 5px;
                 font-weight: 600;
             }
 
-        .option-content:hover {
-            border-color: #667eea;
-            transform: translateY(-3px);
+            .profile-item span {
+                display: block;
+                color: #333;
+                font-size: 16px;
+            }
+
+        .donation-form {
+            max-width: 600px;
         }
 
-        .input-group {
+        .form-group {
             margin-bottom: 20px;
         }
 
-            .input-group label {
+            .form-group label {
                 display: block;
-                font-size: 14px;
-                font-weight: 500;
-                color: #2d3436;
                 margin-bottom: 8px;
+                color: #333;
+                font-weight: 600;
             }
 
-            .input-group input,
-            .input-group textarea {
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
                 width: 100%;
-                padding: 12px 15px;
+                padding: 12px;
                 border: 2px solid #e0e0e0;
                 border-radius: 8px;
                 font-size: 15px;
-                font-family: "Poppins", sans-serif;
-                transition: border-color 0.3s;
+                transition: border 0.3s;
             }
 
-                .input-group input:focus,
-                .input-group textarea:focus {
+                .form-group input:focus,
+                .form-group select:focus,
+                .form-group textarea:focus {
                     outline: none;
                     border-color: #667eea;
                 }
 
-        .donate-btn {
-            width: 100%;
+        .people-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .people-btn {
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .people-btn:hover {
+                background: #667eea;
+                color: white;
+            }
+
+            .people-btn.selected {
+                background: #667eea;
+                color: white;
+            }
+
+        .clothes-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+            .category-card:hover {
+                border-color: #667eea;
+                background: #f5f7ff;
+            }
+
+            .category-card.selected {
+                border-color: #667eea;
+                background: #667eea;
+                color: white;
+            }
+
+            .category-card .icon {
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
+
+        .submit-btn {
+            background: #667eea;
             color: white;
+            padding: 15px 40px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: background 0.3s;
         }
 
-            .donate-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            .submit-btn:hover {
+                background: #5568d3;
             }
 
-        /* Responsive */
-        @@media (max-width: 768px) {
-            .dashboard-wrapper {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .welfare-intro {
-                grid-template-columns: 1fr;
-            }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
+
+            .history-table th,
+            .history-table td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .history-table th {
+                background: #f5f5f5;
+                color: #333;
+                font-weight: 600;
+            }
+
+            .history-table tr:hover {
+                background: #f9f9f9;
+            }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status-pending {
+            background: #ff9800;
+            color: white;
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .quantity-input button {
+                width: 40px;
+                height: 40px;
+                border: 2px solid #667eea;
+                background: white;
+                color: #667eea;
+                border-radius: 8px;
+                font-size: 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+                .quantity-input button:hover {
+                    background: #667eea;
+                    color: white;
+                }
+
+            .quantity-input input {
+                width: 80px;
+                text-align: center;
+            }
     </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="welcome-text">
+                <h1>Welcome, @ViewBag.FullName!</h1>
+                <p>Make a difference today with your generous donation</p>
+            </div>
+            <a href="@Url.Action("Logout", "UserLogin")" class="logout-btn">Logout</a>
+        </div>
+
+        <!-- Tabs Container -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="openTab(event, 'profile')">My Profile</button>
+                <button class="tab" onclick="openTab(event, 'food')">Donate Food</button>
+                <button class="tab" onclick="openTab(event, 'clothes')">Donate Clothes</button>
+                <button class="tab" onclick="openTab(event, 'money')">Donate Money</button>
+                <button class="tab" onclick="openTab(event, 'history')">Donation History</button>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile" class="tab-content active">
+                <h2 style="margin-bottom: 25px; color: #667eea;">Your Profile Information</h2>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <label>User ID</label>
+                        <span>@ViewBag.UserId</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Full Name</label>
+                        <span>@ViewBag.FullName</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Email</label>
+                        <span>@ViewBag.Email</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Phone</label>
+                        <span>@ViewBag.Phone</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>CNIC</label>
+                        <span>@ViewBag.CNIC</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Date of Birth</label>
+                        <span>@ViewBag.DateOfBirth</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Gender</label>
+                        <span>@ViewBag.Gender</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>City</label>
+                        <span>@ViewBag.City</span>
+                    </div>
+                    <div class="profile-item" style="grid-column: 1 / -1;">
+                        <label>Address</label>
+                        <span>@ViewBag.Address</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Donation Tab -->
+            <div id="food" class="tab-content">
+                <h2 style="margin-bottom: 25px; color: #667eea;">Donate Food</h2>
+                <form asp-action="DonateFoodAction" asp-controller="Interfaces" method="post" class="donation-form">
+                    <div class="form-group">
+                        <label>Number of People to Feed *</label>
+                        <div class="people-selector">
+                            <button type="button" class="people-btn" onclick="selectPeople(1)">1 Person</button>
+                            <button type="button" class="people-btn" onclick="selectPeople(2)">2 People</button>
+                            <button type="button" class="people-btn" onclick="selectPeople(3)">3 People</button>
+                            <button type="button" class="people-btn" onclick="selectPeople(4)">4 People</button>
+                            <button type="button" class="people-btn" onclick="selectPeople(5)">5 People</button>
+                            <button type="button" class="people-btn" onclick="selectPeople(10)">10 People</button>
+                            <button type="button" class="people-btn" onclick="selectPeople(20)">20+ People</button>
+                        </div>
+                        <input type="hidden" id="numberOfPeople" name="NumberOfPeople" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Food Type *</label>
+                        <select name="FoodType" required>
+                            <option value="">Select food type</option>
+                            <option value="Cooked Meals">Cooked Meals</option>
+                            <option value="Raw Ingredients">Raw Ingredients (Rice, Flour, etc.)</option>
+                            <option value="Packaged Food">Packaged Food</option>
+                            <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="Description" rows="4" placeholder="Provide details about the food items..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pickup Location *</label>
+                        <input type="text" name="PickupLocation" required placeholder="Enter pickup address">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preferred Pickup Date & Time *</label>
+                        <input type="datetime-local" name="PickupDateTime" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Food Donation</button>
+                </form>
+            </div>
+
+            <!-- Clothes Donation Tab -->
+            <div id="clothes" class="tab-content">
+                <h2 style="margin-bottom: 25px; color: #667eea;">Donate Clothes</h2>
+                <form asp-action="DonateClothesAction" asp-controller="Interfaces" method="post" class="donation-form">
+                    <div class="form-group">
+                        <label>Select Category *</label>
+                        <div class="clothes-categories">
+                            <div class="category-card" onclick="selectCategory('Kids')">
+                                <div class="icon">👶</div>
+                                <div>Kids Clothes</div>
+                            </div>
+                            <div class="category-card" onclick="selectCategory('Male')">
+                                <div class="icon">👔</div>
+                                <div>Male Clothes</div>
+                            </div>
+                            <div class="category-card" onclick="selectCategory('Female')">
+                                <div class="icon">👗</div>
+                                <div>Female Clothes</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="clothesCategory" name="Category" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity (Number of Items) *</label>
+                        <div class="quantity-input">
+                            <button type="button" onclick="changeQuantity(-1)">-</button>
+                            <input type="number" id="clothesQuantity" name="Quantity" value="1" min="1" required>
+                            <button type="button" onclick="changeQuantity(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Condition *</label>
+                        <select name="Condition" required>
+                            <option value="">Select condition</option>
+                            <option value="New">New</option>
+                            <option value="Like New">Like New</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Clothes Type *</label>
+                        <select name="ClothesType" required>
+                            <option value="">Select type</option>
+                            <option value="Winter">Winter</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Formal">Formal</option>
+                            <option value="Casual">Casual</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="Description" rows="4" placeholder="Describe the clothes (sizes, colors, types, etc.)..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pickup Location *</label>
+                        <input type="text" name="PickupLocation" required placeholder="Enter pickup address">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preferred Pickup Date & Time *</label>
+                        <input type="datetime-local" name="PickupDateTime" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Clothes Donation</button>
+                </form>
+            </div>
+
+            <!-- Money Donation Tab -->
+            <div id="money" class="tab-content">
+                <h2 style="margin-bottom: 25px; color: #667eea;">Donate Money</h2>
+                <form asp-action="DonateMoneyAction" asp-controller="Interfaces" method="post" class="donation-form">
+                    <div class="form-group">
+                        <label>Amount (PKR) *</label>
+                        <input type="number" name="Amount" min="100" required placeholder="Enter amount">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Donation Purpose *</label>
+                        <select name="Purpose" required>
+                            <option value="">Select purpose</option>
+                            <option value="General">General Welfare</option>
+                            <option value="Education">Education</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Emergency Relief">Emergency Relief</option>
+                            <option value="Food Support">Food Support</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <select name="PaymentMethod" required>
+                            <option value="">Select payment method</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Mobile Wallet">Mobile Wallet (JazzCash/Easypaisa)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Comments (Optional)</label>
+                        <textarea name="Comments" rows="3" placeholder="Any special instructions or dedication..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Proceed to Payment</button>
+                </form>
+            </div>
+
+            <!-- Donation History Tab -->
+            <div id="history" class="tab-content">
+                <h2 style="margin-bottom: 25px; color: #667eea;">Your Donation History</h2>
+
+                @* This section will be populated from the database *@
+                @if (ViewBag.DonationHistory != null && ((List<dynamic>)ViewBag.DonationHistory).Count > 0)
+                {
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var donation in (List<dynamic>)ViewBag.DonationHistory)
+                            {
+                                <tr>
+                                    <td>@donation.Date</td>
+                                    <td>@donation.Type</td>
+                                    <td>@donation.Description</td>
+                                    <td><span class="status-badge status-@donation.Status.ToLower()">@donation.Status</span></td>
+                                    <td>@donation.Details</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="no-history">
+                        <p style="font-size: 18px; margin-bottom: 10px;">📦 No donations yet</p>
+                        <p>Start making a difference by donating food, clothes, or money!</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabs;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tabs = document.getElementsByClassName("tab");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function selectPeople(number) {
+            // Remove selected class from all buttons
+            var buttons = document.querySelectorAll('.people-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            // Add selected class to clicked button
+            event.target.classList.add('selected');
+
+            // Set the hidden input value
+            document.getElementById('numberOfPeople').value = number;
+        }
+
+        function selectCategory(category) {
+            // Remove selected class from all cards
+            var cards = document.querySelectorAll('.category-card');
+            cards.forEach(card => card.classList.remove('selected'));
+
+            // Add selected class to clicked card
+            event.target.closest('.category-card').classList.add('selected');
+
+            // Set the hidden input value
+            document.getElementById('clothesCategory').value = category;
+        }
+
+        function changeQuantity(delta) {
+            var input = document.getElementById('clothesQuantity');
+            var currentValue = parseInt(input.value) || 1;
+            var newValue = currentValue + delta;
+            if (newValue >= 1) {
+                input.value = newValue;
+            }
+        }
+    </script>
 </body>
 </html>
