@@ -4,84 +4,112 @@
     ViewData["Title"] = "Register";
 }
 
-@if (ViewBag.Error != null)
+@if (TempData["Success"] != null)
 {
-    <div class="alert alert-danger">@ViewBag.Error</div>
-}
-
-@if (ViewBag.Success != null)
-{
-    <div class="alert alert-success">@ViewBag.Success</div>
+    <div class="alert alert-success-fixed">@TempData["Success"]</div>
 }
 
 <div class="register-container">
     <form asp-action="Register" method="post">
         <h2>Create Account</h2>
 
+        @* Show errors only if ModelState has errors *@
+        @if (ViewData.ModelState.Any(x => x.Value.Errors.Count > 0))
+        {
+            <div class="alert alert-danger">
+                @if (ViewBag.Error != null)
+                {
+                    @ViewBag.Error
+                }
+                else
+                {
+                    <ul style="margin: 0; padding-left: 20px;">
+                        @foreach (var modelState in ViewData.ModelState.Values)
+                        {
+                            @foreach (var error in modelState.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                }
+            </div>
+        }
+
         <div class="input-group">
-            <label for="UserId">User ID (6 digits)</label>
-            <input type="number" name="UserId" placeholder="Enter 6-digit User ID" required min="100000" max="999999">
+            <label asp-for="UserId">User ID (6 digits)</label>
+            <input asp-for="UserId" type="number" placeholder="Enter 6-digit User ID" required min="100000" max="999999">
             <span asp-validation-for="UserId" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="UserType">User Type</label>
-            <select name="UserType" required>
+            <label asp-for="UserType">User Type</label>
+            <select asp-for="UserType" required>
                 <option value="">Select Type</option>
                 <option value="Donor">Donor</option>
                 <option value="Receiver">Receiver</option>
             </select>
+            <span asp-validation-for="UserType" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="FullName">Full Name</label>
-            <input type="text" name="FullName" placeholder="Enter your full name" required>
+            <label asp-for="FullName">Full Name</label>
+            <input asp-for="FullName" type="text" placeholder="Enter your full name" required>
+            <span asp-validation-for="FullName" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="CNIC">CNIC</label>
-            <input type="text" name="CNIC" placeholder="XXXXX-XXXXXXX-X" required pattern="\d{5}-\d{7}-\d{1}">
+            <label asp-for="CNIC">CNIC</label>
+            <input asp-for="CNIC" type="text" placeholder="XXXXX-XXXXXXX-X" required pattern="\d{5}-\d{7}-\d{1}">
+            <span asp-validation-for="CNIC" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="Email">Email</label>
-            <input type="email" name="Email" placeholder="Enter your email" required>
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" type="email" placeholder="Enter your email" required>
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="PasswordHash">Password</label>
-            <input type="password" name="PasswordHash" placeholder="Enter password" required minlength="6">
+            <label asp-for="PasswordHash">Password</label>
+            <input asp-for="PasswordHash" type="password" placeholder="Enter password (min 6 characters)" required minlength="6">
+            <span asp-validation-for="PasswordHash" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="Phone">Phone</label>
-            <input type="tel" name="Phone" placeholder="03XX-XXXXXXX" required>
+            <label asp-for="Phone">Phone</label>
+            <input asp-for="Phone" type="tel" placeholder="03XX-XXXXXXX" required pattern="03\d{2}-\d{7}">
+            <span asp-validation-for="Phone" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="DateOfBirth">Date of Birth</label>
-            <input type="date" name="DateOfBirth" required>
+            <label asp-for="DateOfBirth">Date of Birth</label>
+            <input asp-for="DateOfBirth" type="date" required>
+            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="Gender">Gender</label>
-            <select name="Gender" required>
+            <label asp-for="Gender">Gender</label>
+            <select asp-for="Gender" required>
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
                 <option value="PreferNotToSay">Prefer Not to Say</option>
             </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="Address">Address</label>
-            <input type="text" name="Address" placeholder="Enter your address" required>
+            <label asp-for="Address">Address</label>
+            <input asp-for="Address" type="text" placeholder="Enter your address" required>
+            <span asp-validation-for="Address" class="text-danger"></span>
         </div>
 
         <div class="input-group">
-            <label for="City">City</label>
-            <input type="text" name="City" placeholder="Enter your city" required>
+            <label asp-for="City">City</label>
+            <input asp-for="City" type="text" placeholder="Enter your city" required>
+            <span asp-validation-for="City" class="text-danger"></span>
         </div>
 
         <button type="submit">Register</button>
@@ -91,32 +119,46 @@
     </form>
 </div>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Auto-hide success message after 5 seconds
+        setTimeout(function() {
+            var successAlert = document.querySelector('.alert-success-fixed');
+            if (successAlert) {
+                successAlert.style.opacity = '0';
+                setTimeout(function() { successAlert.remove(); }, 300);
+            }
+        }, 5000);
+    </script>
+}
+
 <style>
     body {
         font-family: "Poppins", sans-serif;
         background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         margin: 0;
-        padding: 20px 0;
+        padding: 40px 20px;
     }
 
     .register-container {
-        background: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.75);
         backdrop-filter: blur(10px);
         width: 450px;
         max-width: 90%;
         padding: 35px;
         border-radius: 20px;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        margin: 20px auto;
+        margin: 0 auto;
     }
 
         .register-container h2 {
             text-align: center;
             margin-bottom: 25px;
+            margin-top: 0;
             color: #2d3436;
         }
 
@@ -162,7 +204,27 @@
         display: block;
     }
 
-    button {
+    .validation-summary {
+        background: linear-gradient(135deg, #fee, #fdd);
+        border: 1px solid #fcc;
+        border-left: 4px solid #e74c3c;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        display: none; /* Hide by default */
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .validation-summary li {
+            margin: 5px 0;
+        }
+
+    button[type="submit"] {
         width: 100%;
         padding: 14px;
         font-size: 16px;
@@ -176,10 +238,14 @@
         font-weight: 600;
     }
 
-        button:hover {
+        button[type="submit"]:hover {
             transform: translateY(-3px);
             background: linear-gradient(135deg, #2575fc, #6a11cb);
             box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
         }
 
     .login-link {
@@ -197,6 +263,7 @@
 
             .login-link a:hover {
                 text-decoration: underline;
+                color: #6a11cb;
             }
 
     .alert {
@@ -204,17 +271,83 @@
         border-radius: 8px;
         margin-bottom: 20px;
         text-align: center;
+        animation: slideDown 0.3s ease-out;
     }
 
     .alert-danger {
-        background: #fee;
+        background: linear-gradient(135deg, #fee, #fdd);
         color: #c33;
         border: 1px solid #fcc;
+        border-left: 4px solid #e74c3c;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
     }
 
-    .alert-success {
+        .alert-danger ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .alert-danger li {
+            margin: 5px 0;
+        }
+
+    .alert-success-fixed {
         background: #efe;
         color: #3c3;
         border: 1px solid #cfc;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        min-width: 300px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: opacity 0.3s;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        body {
+            padding: 20px 10px;
+        }
+
+        .register-container {
+            width: 95%;
+            padding: 25px;
+        }
+
+            .register-container h2 {
+                font-size: 22px;
+            }
+
+        .input-group input,
+        .input-group select {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        button[type="submit"] {
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        .alert-success-fixed {
+            min-width: 90%;
+            max-width: 350px;
+        }
     }
 </style>

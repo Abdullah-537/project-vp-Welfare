@@ -1,28 +1,32 @@
 ﻿@{
     ViewData["Title"] = "Login Page";
+    // Only use ViewBag.LoginType if it exists (from POST), otherwise default to "user"
+    var currentLoginType = ViewBag.LoginType as string ?? "user";
 }
-@if (ViewBag.Error != null)
+
+@if (TempData["Success"] != null)
 {
-    <div class="alert alert-danger">@ViewBag.Error</div>
+    <div class="alert alert-success-fixed">@TempData["Success"]</div>
 }
+
 <div class="login-wrapper">
     <div class="sidebar">
         <h3>Login As</h3>
-        <button class="login-type-btn active" data-type="user">
+        <button type="button" class="login-type-btn @(currentLoginType == "user" ? "active" : "")" data-type="user">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
             </svg>
             User Login
         </button>
-        <button class="login-type-btn" data-type="admin">
+        <button type="button" class="login-type-btn @(currentLoginType == "admin" ? "active" : "")" data-type="admin">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
                 <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
             </svg>
             Admin Login
         </button>
-        <button class="login-type-btn" data-type="ngo">
+        <button type="button" class="login-type-btn @(currentLoginType == "ngo" ? "active" : "")" data-type="ngo">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
@@ -32,19 +36,32 @@
 
     <div class="logincontainer">
         <form asp-action="Index" method="post">
-            <h2 id="login-title">User Login</h2>
-            <input type="hidden" id="loginType" name="LoginType" value="user">
+            <h2 id="login-title">@(currentLoginType == "admin" ? "Admin Login" : currentLoginType == "ngo" ? "NGO Login" : "User Login")</h2>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    @ViewBag.Error
+                </div>
+            }
+
+            <input type="hidden" id="loginType" name="LoginType" value="@currentLoginType">
 
             <div class="input-group">
-                <label for="UserID">User ID</label>
-                <input type="text" name="UserID" placeholder="Enter User ID" required>
+                <label for="UserID">@(currentLoginType == "admin" ? "Admin ID" : currentLoginType == "ngo" ? "NGO ID" : "User ID")</label>
+                <input type="text" name="UserID" placeholder="@(currentLoginType == "admin" ? "Enter Admin ID" : currentLoginType == "ngo" ? "Enter NGO ID" : "Enter User ID")" required>
             </div>
             <div class="input-group">
                 <label for="Password">Password</label>
                 <input type="password" name="Password" placeholder="Enter Password" required>
             </div>
             <button type="submit">Login</button>
-            <div class="register-link">
+            <div class="register-link" style='display:@(currentLoginType == "admin" || currentLoginType == "ngo" ? "none" : "block")'>
                 Don't have an account? <a asp-controller="UserLogin" asp-action="Register">Register here</a>
             </div>
         </form>
@@ -206,57 +223,93 @@
                 color: #6a11cb;
             }
 
+    /* Error alert inside container */
     .alert-danger {
-        background: #fee;
+        background: linear-gradient(135deg, #fee, #fdd);
         color: #c33;
         border: 1px solid #fcc;
-        padding: 12px;
+        border-left: 4px solid #e74c3c;
+        padding: 12px 15px;
         border-radius: 8px;
         margin-bottom: 20px;
+        text-align: left;
+        font-size: 14px;
+        animation: slideIn 0.3s ease-out;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Success alert fixed at top */
+    .alert-success-fixed {
+        background: #efe;
+        color: #3c3;
+        border: 1px solid #cfc;
+        padding: 12px;
+        border-radius: 8px;
         text-align: center;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        min-width: 300px;
+        animation: slideDown 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    /* Make sure this is inside the @@media block so it only applies on small screens */
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+
     @@media (max-width: 768px) {
-        body
+        body {
+            height: auto;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    {
-        height: auto;
-        min-height: 100vh;
-        padding: 20px;
-    }
+        .login-wrapper {
+            flex-direction: column;
+            width: 100%;
+            max-width: 380px;
+        }
 
-    .login-wrapper {
-        flex-direction: column;
-        width: 100%;
-        max-width: 380px;
-    }
+        .sidebar {
+            width: 100%;
+        }
 
-    .sidebar {
-        width: 100%;
-    }
+        .logincontainer {
+            width: 100%;
+        }
 
-    .logincontainer {
-        width: 100%;
-    }
-
+        .alert-success-fixed {
+            min-width: 90%;
+            max-width: 350px;
+        }
     }
 </style>
 
 <script>
-    /*
-    Pseudocode / Plan:
-    - On DOMContentLoaded, find all .login-type-btn buttons, the hidden #loginType input, the #login-title element,
-      the label for UserID, the UserID input, and the .register-link container.
-    - Map each type ("user","admin","ngo") to a title, ID label text, and placeholder text.
-    - Add click listeners to each button:
-        - remove .active from all buttons and add to clicked one
-        - set hidden input value to clicked button data-type
-        - update the title text
-        - update the ID label and placeholder
-        - hide the Register link for admin, show for user/ngo
-    - Ensure graceful fallback if elements are missing.
-    */
     document.addEventListener('DOMContentLoaded', function () {
         const buttons = Array.from(document.querySelectorAll('.login-type-btn'));
         const loginTypeInput = document.getElementById('loginType');
@@ -274,11 +327,13 @@
             if (loginTitle) loginTitle.textContent = titleMap[type] || 'User Login';
             if (userIdLabel) userIdLabel.textContent = idLabelMap[type] || 'User ID';
             if (userIdInput) userIdInput.placeholder = placeholderMap[type] || 'Enter User ID';
-            if (registerLink) registerLink.style.display = (type === 'admin') ? 'none' : 'block';
+            // FIXED: Hide register link for BOTH admin and NGO
+            if (registerLink) registerLink.style.display = (type === 'admin' || type === 'ngo') ? 'none' : 'block';
         }
 
         buttons.forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
                 buttons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const type = this.dataset.type || 'user';
@@ -286,10 +341,17 @@
             });
         });
 
-        // Initialize to value in hidden input or active button
-        const initial = (loginTypeInput && loginTypeInput.value) ||
-                        (buttons.find(b => b.classList.contains('active')) || {}).dataset?.type ||
-                        'user';
-        applyType(initial);
+        // Initialize on page load
+        const initialType = loginTypeInput ? loginTypeInput.value : 'user';
+        applyType(initialType);
+
+        // Auto-hide success message after 5 seconds
+        const successAlert = document.querySelector('.alert-success-fixed');
+        if (successAlert) {
+            setTimeout(() => {
+                successAlert.style.opacity = '0';
+                setTimeout(() => successAlert.remove(), 300);
+            }, 5000);
+        }
     });
 </script>

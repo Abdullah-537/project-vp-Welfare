@@ -24,6 +24,9 @@ namespace web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string LoginType, string UserID, string Password)
         {
+            // Preserve the login type for the view in case of error
+            ViewBag.LoginType = LoginType ?? "user";
+
             if (string.IsNullOrWhiteSpace(UserID) || string.IsNullOrWhiteSpace(Password))
             {
                 ViewBag.Error = "Please provide both ID and password.";
@@ -32,7 +35,7 @@ namespace web.Controllers
 
             if (!int.TryParse(UserID, out var id))
             {
-                ViewBag.Error = "ID must be a numeric 6-digit value.";
+                ViewBag.Error = "ID must be a numeric value.";
                 return View();
             }
 
@@ -44,8 +47,10 @@ namespace web.Controllers
                     var ngo = await _context.NGOsLogins.FindAsync(id);
                     if (ngo != null && ngo.PasswordHash == Password)
                     {
+                        HttpContext.Session.SetInt32("NGOId", id);
+                        HttpContext.Session.SetString("UserType", "NGO");
                         TempData["Success"] = "NGO login successful.";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Dashboard", "NGO");
                     }
                     break;
 
@@ -53,53 +58,112 @@ namespace web.Controllers
                     var admin = await _context.AdminLogins.FindAsync(id);
                     if (admin != null && admin.passwordHash == Password)
                     {
+                        HttpContext.Session.SetInt32("AdminId", id);
+                        HttpContext.Session.SetString("UserType", "Admin");
                         TempData["Success"] = "Admin login successful.";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Dashboard", "Admin");
                     }
                     break;
 
-                default: // user
+                default: // user (Donor or Receiver)
                     var user = await _context.UserLoginConfidentials.FindAsync(id);
                     if (user != null && user.PasswordHash == Password)
                     {
-                        TempData["Success"] = "User login successful.";
-                        return RedirectToAction("Index");
+                        // Check if user is active
+                        if (!user.IsActive)
+                        {
+                            ViewBag.Error = "Your account has been deactivated. Please contact support.";
+                            return View();
+                        }
+
+                        // Store user info in session
+                        HttpContext.Session.SetInt32("UserId", id);
+                        HttpContext.Session.SetString("UserName", user.FullName);
+                        HttpContext.Session.SetString("UserType", user.UserType); // Store actual UserType (Donor/Receiver)
+
+                        TempData["Success"] = $"Welcome back, {user.FullName}!";
+
+                        // Redirect based on UserType column
+                        if (user.UserType.Equals("Donor", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return RedirectToAction("DonorDashboard", "Donor");
+                        }
+                        else if (user.UserType.Equals("Receiver", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return RedirectToAction("ReceiverDashboard", "Receiver");
+                        }
+                        else
+                        {
+                            ViewBag.Error = "Invalid user type. Please contact administrator.";
+                            return View();
+                        }
                     }
                     break;
             }
 
             ViewBag.Error = "Invalid ID or password.";
-            ModelState.AddModelError(string.Empty, "Invalid ID or password.");
             return View();
         }
 
         public IActionResult Register()
         {
+            // Clear any existing ModelState to prevent validation errors on GET
+            ModelState.Clear();
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(UserLoginConfidentials loginConfidentials)
         {
+            // Remove navigation property errors from ModelState
+            ModelState.Remove("ReceiverRequests");
+            ModelState.Remove("DonorTransactions");
+
+            // Check for duplicates BEFORE ModelState validation
+            if (await _context.UserLoginConfidentials.AnyAsync(u => u.UserId == loginConfidentials.UserId))
+            {
+                ModelState.AddModelError("UserId", "User ID already exists. Please choose a different one.");
+                loginConfidentials.PasswordHash = ""; // Clear password
+                return View(loginConfidentials);
+            }
+
+            if (await _context.UserLoginConfidentials.AnyAsync(u => u.CNIC == loginConfidentials.CNIC))
+            {
+                ModelState.AddModelError("CNIC", "CNIC already registered. Please use a different CNIC.");
+                loginConfidentials.PasswordHash = ""; // Clear password
+                return View(loginConfidentials);
+            }
+
+            if (await _context.UserLoginConfidentials.AnyAsync(u => u.Email == loginConfidentials.Email))
+            {
+                ModelState.AddModelError("Email", "Email already registered. Please use a different email.");
+                loginConfidentials.PasswordHash = ""; // Clear password
+                return View(loginConfidentials);
+            }
+
             if (ModelState.IsValid)
             {
-                if (_context.UserLoginConfidentials.Any(u => u.UserId == loginConfidentials.UserId))
-                {
-                    ModelState.AddModelError("User ID", "User ID already exists. Please choose a different one.");
-                    return View(loginConfidentials);
-                }
-                if (_context.UserLoginConfidentials.Any(u => u.CNIC == loginConfidentials.CNIC))
-                {
-                    ModelState.AddModelError("CNIC", "CNIC already exists. Please choose a different one.");
-                    return View(loginConfidentials);
-                }
+                // Set registration date and active status
+                loginConfidentials.RegistrationDate = DateTime.Now;
+                loginConfidentials.IsActive = true;
 
                 await _context.UserLoginConfidentials.AddAsync(loginConfidentials);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Registration successful! Please login.";
+
+                TempData["Success"] = "Registration successful! Please login with your credentials.";
                 return RedirectToAction("Index");
             }
+
+            // Clear password on any validation error
+            loginConfidentials.PasswordHash = "";
             return View(loginConfidentials);
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            TempData["Success"] = "Logged out successfully.";
+            return RedirectToAction("Index");
         }
     }
 }
