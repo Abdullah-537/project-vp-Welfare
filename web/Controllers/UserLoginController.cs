@@ -67,6 +67,17 @@ namespace web.Controllers
 
                 default: // user (Donor or Receiver)
                     var user = await _context.UserLoginConfidentials.FindAsync(id);
+
+                    // DEBUG: Log what we found
+                    Console.WriteLine($"DEBUG: User found: {user != null}");
+                    if (user != null)
+                    {
+                        Console.WriteLine($"DEBUG: User ID: {user.UserId}");
+                        Console.WriteLine($"DEBUG: User Type: {user.UserType}");
+                        Console.WriteLine($"DEBUG: Password Match: {user.PasswordHash == Password}");
+                        Console.WriteLine($"DEBUG: IsActive: {user.IsActive}");
+                    }
+
                     if (user != null && user.PasswordHash == Password)
                     {
                         // Check if user is active
@@ -77,27 +88,37 @@ namespace web.Controllers
                         }
 
                         // Store user info in session
-                        HttpContext.Session.SetInt32("UserId", id);
+                        HttpContext.Session.SetInt32("UserId", user.UserId);
                         HttpContext.Session.SetString("UserName", user.FullName);
-                        HttpContext.Session.SetString("UserType", user.UserType); // Store actual UserType (Donor/Receiver)
+                        HttpContext.Session.SetString("UserType", user.UserType);
 
+                        // DEBUG: Verify session was set
+                        Console.WriteLine($"DEBUG: Session UserId set: {HttpContext.Session.GetInt32("UserId")}");
+                        Console.WriteLine($"DEBUG: Session UserType set: {HttpContext.Session.GetString("UserType")}");
+
+                        // Set success message
                         TempData["Success"] = $"Welcome back, {user.FullName}!";
 
                         // Redirect based on UserType column
                         if (user.UserType.Equals("Donor", StringComparison.OrdinalIgnoreCase))
                         {
-                            return RedirectToAction("DonorDashboard", "Donor");
+                            Console.WriteLine("DEBUG: Redirecting to Donor Dashboard");
+                            return RedirectToAction("DonorDashboard", "Interfaces");
                         }
                         else if (user.UserType.Equals("Receiver", StringComparison.OrdinalIgnoreCase))
                         {
+                            Console.WriteLine("DEBUG: Redirecting to Receiver Dashboard");
                             return RedirectToAction("ReceiverDashboard", "Receiver");
                         }
                         else
                         {
+                            Console.WriteLine($"DEBUG: Invalid UserType: {user.UserType}");
                             ViewBag.Error = "Invalid user type. Please contact administrator.";
                             return View();
                         }
                     }
+
+                    Console.WriteLine("DEBUG: Authentication failed - no match found");
                     break;
             }
 

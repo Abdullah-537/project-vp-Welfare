@@ -1,29 +1,26 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web.Data;
-using web.Models;
-using web.Services; // Add this using statement
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Add DbContext
+// ===== ADD THIS: Register DbContext with Dependency Injection =====
 builder.Services.AddDbContext<WelfareDb>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Session support
+// Add session support - CRITICAL for authentication
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".WelfareApp.Session";
 });
 
-// Register the Background Service for Monthly Allocation
-builder.Services.AddHostedService<MonthlyAllocationService>();
+// Add HttpContextAccessor for session access
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -36,11 +33,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-app.UseSession(); // Add this
-
+// IMPORTANT: Enable session middleware BEFORE authorization
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
