@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Login Page";
-    // Only use ViewBag.LoginType if it exists (from POST), otherwise default to "user"
     var currentLoginType = ViewBag.LoginType as string ?? "user";
 }
 
@@ -41,7 +40,7 @@
             @if (ViewBag.Error != null)
             {
                 <div class="alert alert-danger">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -54,11 +53,11 @@
 
             <div class="input-group">
                 <label for="UserID">@(currentLoginType == "admin" ? "Admin ID" : currentLoginType == "ngo" ? "NGO ID" : "User ID")</label>
-                <input type="text" name="UserID" placeholder="@(currentLoginType == "admin" ? "Enter Admin ID" : currentLoginType == "ngo" ? "Enter NGO ID" : "Enter User ID")" required>
+                <input type="text" name="UserID" id="userIdInput" placeholder="@(currentLoginType == "admin" ? "Enter Admin ID" : currentLoginType == "ngo" ? "Enter NGO ID" : "Enter User ID")" required>
             </div>
             <div class="input-group">
                 <label for="Password">Password</label>
-                <input type="password" name="Password" placeholder="Enter Password" required>
+                <input type="password" name="Password" id="passwordInput" placeholder="Enter Password" required>
             </div>
             <button type="submit">Login</button>
             <div class="register-link" style='display:@(currentLoginType == "admin" || currentLoginType == "ngo" ? "none" : "block")'>
@@ -71,7 +70,8 @@
 <style>
     body {
         font-family: "Poppins", sans-serif;
-        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        background: #0f0f0f;
+        color: #eee;
         height: 100vh;
         display: flex;
         justify-content: center;
@@ -87,235 +87,248 @@
     }
 
     .sidebar {
-        background: rgba(255, 255, 255, 0.55);
-        backdrop-filter: blur(10px);
-        padding: 25px;
+        background: rgba(20, 20, 30, 0.7);
+        backdrop-filter: blur(12px);
+        padding: 30px 20px;
         border-radius: 20px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        width: 200px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 46, 99, 0.2);
+        width: 220px;
         display: flex;
         flex-direction: column;
     }
 
         .sidebar h3 {
-            color: #2d3436;
-            margin-bottom: 20px;
-            margin-top: 0;
+            color: #ff2e63;
+            margin: 0 0 25px 0;
             text-align: center;
-            font-size: 18px;
+            font-size: 19px;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 46, 99, 0.4);
         }
 
     .login-type-btn {
         width: 100%;
-        padding: 15px;
-        margin-bottom: 12px;
+        padding: 16px;
+        margin-bottom: 14px;
         border: 2px solid transparent;
-        background: rgba(255, 255, 255, 0.6);
-        color: #34495e;
-        border-radius: 12px;
+        background: rgba(30, 30, 50, 0.6);
+        color: #ccc;
+        border-radius: 14px;
         cursor: pointer;
-        transition: 0.3s;
-        font-size: 14px;
+        transition: all 0.4s ease;
+        font-size: 15px;
         font-weight: 500;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         justify-content: center;
+        position: relative;
+        overflow: hidden;
     }
 
+        .login-type-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 46, 99, 0.2), transparent);
+            transition: 0.7s;
+        }
+
+        .login-type-btn:hover::before {
+            left: 100%;
+        }
+
         .login-type-btn:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateX(5px);
+            background: rgba(40, 40, 70, 0.8);
+            border-color: #ff2e63;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 46, 99, 0.3);
         }
 
         .login-type-btn.active {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #ff2e63, #ff5e8f);
             color: white;
-            border-color: #2575fc;
-            box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
+            border-color: #ff2e63;
+            box-shadow: 0 0 20px rgba(255, 46, 99, 0.6);
+            transform: scale(1.05);
         }
 
         .login-type-btn svg {
             flex-shrink: 0;
+            stroke: currentColor;
         }
 
     .logincontainer {
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(10px);
-        width: 380px;
-        padding: 35px;
+        background: rgba(25, 25, 40, 0.85);
+        backdrop-filter: blur(14px);
+        width: 400px;
+        padding: 40px;
         border-radius: 20px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 46, 99, 0.3);
     }
 
         .logincontainer h2 {
             text-align: center;
-            margin-bottom: 25px;
-            margin-top: 0;
-            color: #2d3436;
+            margin-bottom: 30px;
+            color: #ff2e63;
+            font-size: 28px;
+            text-shadow: 0 0 15px rgba(255, 46, 99, 0.5);
         }
 
     .input-group {
-        margin-bottom: 18px;
+        margin-bottom: 20px;
     }
 
         .input-group label {
             display: block;
             font-size: 14px;
-            margin-bottom: 6px;
-            color: #34495e;
+            margin-bottom: 8px;
+            color: #ff8fab;
             font-weight: 500;
         }
 
         .input-group input {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            background: rgba(40, 40, 60, 0.8);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             outline: none;
             transition: 0.3s;
             box-sizing: border-box;
         }
 
             .input-group input:focus {
-                box-shadow: 0 0 0 2px #6ab0ff;
+                box-shadow: 0 0 0 3px rgba(255, 46, 99, 0.4);
+                background: rgba(50, 50, 80, 0.9);
+            }
+
+            .input-group input::placeholder {
+                color: #aaa;
             }
 
     button[type="submit"] {
         width: 100%;
-        padding: 14px;
-        font-size: 16px;
+        padding: 15px;
+        font-size: 17px;
         font-weight: 600;
         border: none;
-        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        background: linear-gradient(135deg, #ff2e63, #ff5e8f);
         color: white;
         border-radius: 12px;
         cursor: pointer;
-        transition: 0.3s;
+        transition: all 0.4s;
         margin-top: 10px;
+        box-shadow: 0 8px 20px rgba(255, 46, 99, 0.4);
     }
 
         button[type="submit"]:hover {
-            transform: translateY(-3px);
-            background: linear-gradient(135deg, #2575fc, #6a11cb);
-            box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, #ff5e8f, #ff2e63);
+            box-shadow: 0 12px 30px rgba(255, 46, 99, 0.6);
         }
 
     .register-link {
         text-align: center;
-        margin-top: 20px;
-        color: #34495e;
+        margin-top: 25px;
+        color: #ccc;
         font-size: 14px;
     }
 
         .register-link a {
-            color: #2575fc;
+            color: #ff8fab;
             text-decoration: none;
             font-weight: 600;
-            cursor: pointer;
         }
 
             .register-link a:hover {
+                color: #ff2e63;
                 text-decoration: underline;
-                color: #6a11cb;
             }
 
-    /* Error alert inside container */
     .alert-danger {
-        background: linear-gradient(135deg, #fee, #fdd);
-        color: #c33;
-        border: 1px solid #fcc;
-        border-left: 4px solid #e74c3c;
-        padding: 12px 15px;
-        border-radius: 8px;
+        background: rgba(255, 50, 80, 0.15);
+        color: #ff6b8b;
+        border: 1px solid #ff2e63;
+        border-left: 5px solid #ff2e63;
+        padding: 14px;
+        border-radius: 10px;
         margin-bottom: 20px;
-        text-align: left;
-        font-size: 14px;
-        animation: slideIn 0.3s ease-out;
         display: flex;
         align-items: center;
+        font-size: 14px;
     }
 
-    /* Success alert fixed at top */
     .alert-success-fixed {
-        background: #efe;
-        color: #3c3;
-        border: 1px solid #cfc;
-        padding: 12px;
-        border-radius: 8px;
+        background: rgba(0, 200, 100, 0.2);
+        color: #00ff9d;
+        border: 1px solid #00ff9d;
+        padding: 14px;
+        border-radius: 10px;
         text-align: center;
         position: fixed;
         top: 20px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 1000;
-        min-width: 300px;
-        animation: slideDown 0.3s ease-out;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    @@keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        min-width: 320px;
+        box-shadow: 0 5px 20px rgba(0, 255, 150, 0.3);
+        animation: slideDown 0.5s ease-out;
     }
 
     @@keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translate(-50%, -20px);
-        }
+        from
 
-        to {
-            opacity: 1;
-            transform: translate(-50%, 0);
-        }
+    {
+        opacity: 0;
+        transform: translate(-50%, -30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+
     }
 
     @@media (max-width: 768px) {
-        body {
-            height: auto;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        .login-wrapper
 
-        .login-wrapper {
-            flex-direction: column;
-            width: 100%;
-            max-width: 380px;
-        }
+    {
+        flex-direction: column;
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+    }
 
-        .sidebar {
-            width: 100%;
-        }
+    .sidebar, .logincontainer {
+        width: 100%;
+    }
 
-        .logincontainer {
-            width: 100%;
-        }
+    .alert-success-fixed {
+        min-width: 90%;
+    }
 
-        .alert-success-fixed {
-            min-width: 90%;
-            max-width: 350px;
-        }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const buttons = Array.from(document.querySelectorAll('.login-type-btn'));
+        const buttons = document.querySelectorAll('.login-type-btn');
         const loginTypeInput = document.getElementById('loginType');
         const loginTitle = document.getElementById('login-title');
         const userIdLabel = document.querySelector('label[for="UserID"]');
-        const userIdInput = document.querySelector('input[name="UserID"]');
+        const userIdInput = document.getElementById('userIdInput');
+        const passwordInput = document.getElementById('passwordInput');
         const registerLink = document.querySelector('.register-link');
 
         const titleMap = { user: 'User Login', admin: 'Admin Login', ngo: 'NGO Login' };
@@ -323,34 +336,35 @@
         const placeholderMap = { user: 'Enter User ID', admin: 'Enter Admin ID', ngo: 'Enter NGO ID' };
 
         function applyType(type) {
-            if (loginTypeInput) loginTypeInput.value = type;
-            if (loginTitle) loginTitle.textContent = titleMap[type] || 'User Login';
-            if (userIdLabel) userIdLabel.textContent = idLabelMap[type] || 'User ID';
-            if (userIdInput) userIdInput.placeholder = placeholderMap[type] || 'Enter User ID';
-            // FIXED: Hide register link for BOTH admin and NGO
-            if (registerLink) registerLink.style.display = (type === 'admin' || type === 'ngo') ? 'none' : 'block';
+            loginTypeInput.value = type;
+            loginTitle.textContent = titleMap[type];
+            userIdLabel.textContent = idLabelMap[type];
+            userIdInput.placeholder = placeholderMap[type];
+            registerLink.style.display = (type === 'admin' || type === 'ngo') ? 'none' : 'block';
+
+            // Clear input fields when switching login type
+            userIdInput.value = '';
+            passwordInput.value = '';
         }
 
         buttons.forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
+            btn.addEventListener('click', function () {
                 buttons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                const type = this.dataset.type || 'user';
+                const type = this.dataset.type;
                 applyType(type);
             });
         });
 
-        // Initialize on page load
-        const initialType = loginTypeInput ? loginTypeInput.value : 'user';
-        applyType(initialType);
+        // Initialize
+        applyType(loginTypeInput.value);
 
-        // Auto-hide success message after 5 seconds
+        // Auto-hide success alert
         const successAlert = document.querySelector('.alert-success-fixed');
         if (successAlert) {
             setTimeout(() => {
                 successAlert.style.opacity = '0';
-                setTimeout(() => successAlert.remove(), 300);
+                setTimeout(() => successAlert.remove(), 400);
             }, 5000);
         }
     });

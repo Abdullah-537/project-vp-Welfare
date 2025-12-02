@@ -6,11 +6,47 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace web.Migrations
 {
     /// <inheritdoc />
-    public partial class SeparateTransactionFlows : Migration
+    public partial class createDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "UserType",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(20)",
+                maxLength: 20,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Phone",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(12)",
+                maxLength: 12,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "PasswordHash",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(255)",
+                maxLength: 255,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Gender",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(20)",
+                maxLength: 20,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.AlterColumn<string>(
                 name: "FullName",
                 table: "UserLoginConfidentials",
@@ -23,7 +59,17 @@ namespace web.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
                 table: "UserLoginConfidentials",
-                type: "nvarchar(450)",
+                type: "nvarchar(100)",
+                maxLength: 100,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "City",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(50)",
+                maxLength: 50,
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
@@ -33,6 +79,15 @@ namespace web.Migrations
                 table: "UserLoginConfidentials",
                 type: "nvarchar(15)",
                 maxLength: 15,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Address",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(200)",
+                maxLength: 200,
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
@@ -115,18 +170,16 @@ namespace web.Migrations
                     MonetaryAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DonationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FoodQuantity = table.Column<int>(type: "int", nullable: true),
-                    FoodUnit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FoodDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MaleClothesQuantity = table.Column<int>(type: "int", nullable: true),
                     FemaleClothesQuantity = table.Column<int>(type: "int", nullable: true),
                     KidsClothesQuantity = table.Column<int>(type: "int", nullable: true),
-                    ClothesSize = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClothesType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClothesDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShelterBeds = table.Column<int>(type: "int", nullable: true),
                     ShelterDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ItemDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WelfareBalanceAfter = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    WelfareBalanceAfter = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
                     FoodInventoryAfter = table.Column<int>(type: "int", nullable: true),
                     MaleClothesInventoryAfter = table.Column<int>(type: "int", nullable: true),
                     FemaleClothesInventoryAfter = table.Column<int>(type: "int", nullable: true),
@@ -379,7 +432,7 @@ namespace web.Migrations
             migrationBuilder.InsertData(
                 table: "WelfareFunds",
                 columns: new[] { "FundId", "CurrentBalance", "FemaleClothesInventory", "FoodInventoryUnits", "FoodUnit", "KidsClothesInventory", "LastMonthlyReset", "LastUpdated", "MaleClothesInventory", "MonthlyAllocation", "MonthlyFemaleClothesAllocation", "MonthlyFoodAllocation", "MonthlyKidsClothesAllocation", "MonthlyMaleClothesAllocation", "ShelterAvailable", "ShelterCapacity", "ShelterOccupied" },
-                values: new object[] { 1, 1000000m, 1000, 100000, "rations", 500, new DateTime(2025, 11, 29, 13, 32, 52, 573, DateTimeKind.Local).AddTicks(6523), new DateTime(2025, 11, 29, 13, 32, 52, 573, DateTimeKind.Local).AddTicks(6501), 1000, 1000000m, 500, 50000, 300, 500, 50, 50, 0 });
+                values: new object[] { 1, 1000000m, 1000, 100000, "rations", 500, new DateTime(2025, 12, 2, 3, 9, 0, 593, DateTimeKind.Local).AddTicks(5669), new DateTime(2025, 12, 2, 3, 9, 0, 593, DateTimeKind.Local).AddTicks(5641), 1000, 1000000m, 500, 50000, 300, 500, 50, 50, 0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLoginConfidentials_CNIC",
@@ -505,6 +558,42 @@ namespace web.Migrations
                 table: "AdminLogins");
 
             migrationBuilder.AlterColumn<string>(
+                name: "UserType",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(20)",
+                oldMaxLength: 20);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Phone",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(12)",
+                oldMaxLength: 12);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "PasswordHash",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(255)",
+                oldMaxLength: 255);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Gender",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(20)",
+                oldMaxLength: 20);
+
+            migrationBuilder.AlterColumn<string>(
                 name: "FullName",
                 table: "UserLoginConfidentials",
                 type: "nvarchar(max)",
@@ -519,7 +608,17 @@ namespace web.Migrations
                 type: "nvarchar(max)",
                 nullable: false,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(450)");
+                oldType: "nvarchar(100)",
+                oldMaxLength: 100);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "City",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50);
 
             migrationBuilder.AlterColumn<string>(
                 name: "CNIC",
@@ -529,6 +628,15 @@ namespace web.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(15)",
                 oldMaxLength: 15);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Address",
+                table: "UserLoginConfidentials",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(200)",
+                oldMaxLength: 200);
 
             migrationBuilder.AlterColumn<string>(
                 name: "OrganizationName",

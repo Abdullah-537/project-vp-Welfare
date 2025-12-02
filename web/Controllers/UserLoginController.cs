@@ -103,7 +103,7 @@ namespace web.Controllers
                         if (user.UserType.Equals("Donor", StringComparison.OrdinalIgnoreCase))
                         {
                             Console.WriteLine("DEBUG: Redirecting to Donor Dashboard");
-                            return RedirectToAction("DonorDashboard", "Interfaces");
+                            return RedirectToAction("Index", "DonorDashboard");
                         }
                         else if (user.UserType.Equals("Receiver", StringComparison.OrdinalIgnoreCase))
                         {

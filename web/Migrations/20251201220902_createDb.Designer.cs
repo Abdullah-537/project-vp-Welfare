@@ -12,8 +12,8 @@ using web.Data;
 namespace web.Migrations
 {
     [DbContext(typeof(WelfareDb))]
-    [Migration("20251129083254_SeparateTransactionFlows")]
-    partial class SeparateTransactionFlows
+    [Migration("20251201220902_createDb")]
+    partial class createDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,10 +59,6 @@ namespace web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ClothesSize")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ClothesType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -93,10 +89,6 @@ namespace web.Migrations
                     b.Property<int?>("FoodQuantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("FoodUnit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ItemDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -125,8 +117,8 @@ namespace web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("WelfareBalanceAfter")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("TransactionId");
 
@@ -436,7 +428,8 @@ namespace web.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("CNIC")
                         .IsRequired()
@@ -445,14 +438,16 @@ namespace web.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -461,25 +456,29 @@ namespace web.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("UserId");
 
@@ -564,8 +563,8 @@ namespace web.Migrations
                             FoodInventoryUnits = 100000,
                             FoodUnit = "rations",
                             KidsClothesInventory = 500,
-                            LastMonthlyReset = new DateTime(2025, 11, 29, 13, 32, 52, 573, DateTimeKind.Local).AddTicks(6523),
-                            LastUpdated = new DateTime(2025, 11, 29, 13, 32, 52, 573, DateTimeKind.Local).AddTicks(6501),
+                            LastMonthlyReset = new DateTime(2025, 12, 2, 3, 9, 0, 593, DateTimeKind.Local).AddTicks(5669),
+                            LastUpdated = new DateTime(2025, 12, 2, 3, 9, 0, 593, DateTimeKind.Local).AddTicks(5641),
                             MaleClothesInventory = 1000,
                             MonthlyAllocation = 1000000m,
                             MonthlyFemaleClothesAllocation = 500,

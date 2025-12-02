@@ -73,6 +73,13 @@ namespace web.Data
                 .WithMany()
                 .HasForeignKey(w => w.RequestId)
                 .OnDelete(DeleteBehavior.Restrict);
+           
+            modelBuilder.Entity<DonorToWelfareTransaction>(entity =>
+            {
+                entity.Property(e => e.WelfareBalanceAfter)
+                    .HasPrecision(18, 4); // Adjust precision/scale as needed
+                                          // 18 total digits, 4 decimal places
+            });
 
             modelBuilder.Entity<WelfareToReceiverTransaction>()
                 .HasOne(w => w.Receiver)
@@ -106,10 +113,6 @@ namespace web.Data
 
             modelBuilder.Entity<DonorToWelfareTransaction>()
                 .Property(d => d.MonetaryAmount)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<DonorToWelfareTransaction>()
-                .Property(d => d.WelfareBalanceAfter)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<NGOToWelfareTransaction>()
