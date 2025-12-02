@@ -1,4 +1,4 @@
-﻿// DonorDashboard.js - Complete UI behavior
+﻿// DonorDashboard.js - Complete UI behavior with Blue Theme
 (function () {
     'use strict';
 
@@ -230,9 +230,10 @@
         });
     }
 
-    // ==================== SUCCESS ANIMATION ====================
+    // ==================== SUCCESS ANIMATION (BLUE THEME) ====================
     function createConfetti() {
-        const colors = ['#ff4da6', '#ff1f8a', '#ffb3d6', '#ffa7cc', '#ff7ab8'];
+        // Blue theme confetti colors
+        const colors = ['#667eea', '#764ba2', '#98a0f8', '#8a6ab8', '#7f8ff1'];
         for (let i = 0; i < 50; i++) {
             const c = document.createElement('div');
             c.style.position = 'fixed';
@@ -267,18 +268,18 @@
         overlay.style.backdropFilter = 'blur(4px)';
         document.body.appendChild(overlay);
 
-        // Create success box
+        // Create success box with BLUE THEME
         const box = document.createElement('div');
         box.style.position = 'fixed';
         box.style.left = '50%';
         box.style.top = '50%';
         box.style.transform = 'translate(-50%,-50%) scale(0.8)';
         box.style.zIndex = '9999';
-        box.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+        box.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         box.style.padding = '50px';
         box.style.borderRadius = '20px';
-        box.style.border = '2px solid rgba(255,77,166,0.3)';
-        box.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)';
+        box.style.border = '2px solid rgba(255, 255, 255, 0.3)';
+        box.style.boxShadow = '0 20px 60px rgba(102, 126, 234, 0.5)';
         box.style.textAlign = 'center';
         box.style.minWidth = '350px';
         box.style.animation = 'popIn 0.3s ease-out forwards';
@@ -287,8 +288,8 @@
 
         box.innerHTML = `
             <div style="font-size:80px;margin-bottom:20px;animation: bounce 0.6s ease-in-out infinite;">${emoji}</div>
-            <h2 style="color:#ff4da6;margin-bottom:15px;font-size:28px;font-weight:600;">Donation Successful!</h2>
-            <p style="color:#ccc;font-size:18px;line-height:1.6;">Thank you for your generous <strong style="color:#fff;">${type}</strong> donation.<br>You're making a real difference! ❤️</p>
+            <h2 style="color:#ffffff;margin-bottom:15px;font-size:28px;font-weight:600;text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Donation Successful!</h2>
+            <p style="color:#ffffff;font-size:18px;line-height:1.6;opacity:0.95;">Thank you for your generous <strong style="color:#fff;text-shadow: 0 1px 5px rgba(0,0,0,0.2);">${type}</strong> donation.<br>You're making a real difference! ❤️</p>
         `;
         document.body.appendChild(box);
 

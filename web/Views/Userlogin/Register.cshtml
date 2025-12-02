@@ -161,27 +161,27 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #0f0f0f;
-        padding: 20px 15px;
+        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        padding: 40px 20px;
         box-sizing: border-box;
     }
 
     body {
         margin: 0;
         font-family: "Poppins", sans-serif;
-        background: #0f0f0f;
-        color: #eee;
+        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        color: #2d3436;
     }
 
     .register-container {
-        background: rgba(25, 25, 40, 0.92);
+        background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(16px);
         width: 480px;
         max-width: 95%;
         padding: 50px 40px;
         border-radius: 22px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-        border: 1px solid rgba(255, 46, 99, 0.35);
+        box-shadow: 0 20px 50px rgba(58, 123, 213, 0.3);
+        border: 1px solid rgba(103, 126, 234, 0.35);
         position: relative;
         overflow: hidden;
     }
@@ -193,7 +193,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #ff2e63, #ff5e8f, #ff2e63);
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
             border-radius: 22px 22px 0 0;
         }
 
@@ -201,8 +201,8 @@
             text-align: center;
             margin: 0 0 38px 0;
             font-size: 32px;
-            color: #ff2e63;
-            text-shadow: 0 0 20px rgba(255, 46, 99, 0.7);
+            color: #667eea;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
             font-weight: 700;
             letter-spacing: 1px;
         }
@@ -216,7 +216,7 @@
             display: block;
             font-size: 14px;
             margin-bottom: 8px;
-            color: #ff8fab;
+            color: #667eea;
             font-weight: 500;
         }
 
@@ -227,9 +227,9 @@
             border: none;
             border-radius: 12px;
             font-size: 15px;
-            background: rgba(40, 40, 60, 0.85);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3436;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             outline: none;
             transition: all 0.4s ease;
             box-sizing: border-box;
@@ -239,18 +239,18 @@
 
             .input-group input:focus,
             .input-group select:focus {
-                box-shadow: 0 0 0 3px rgba(255, 46, 99, 0.5), 0 8px 25px rgba(255, 46, 99, 0.3);
-                background: rgba(50, 50, 80, 0.95);
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 8px 25px rgba(102, 126, 234, 0.2);
+                background: white;
                 transform: translateY(-2px);
             }
 
             .input-group input::placeholder {
-                color: #999;
+                color: #b2bec3;
                 font-style: italic;
             }
 
     .text-danger {
-        color: #ff6b8b !important;
+        color: #e74c3c !important;
         font-size: 12.5px;
         margin-top: 6px;
         display: block;
@@ -263,57 +263,67 @@
         font-size: 18px;
         font-weight: 700;
         border: none;
-        background: linear-gradient(135deg, #ff2e63, #ff5e8f);
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         border-radius: 14px;
         cursor: pointer;
         transition: all 0.4s ease;
         margin-top: 20px;
-        box-shadow: 0 10px 30px rgba(255, 46, 99, 0.5);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
         button[type="submit"]:hover {
             transform: translateY(-5px);
-            background: linear-gradient(135deg, #ff5e8f, #ff2e63);
-            box-shadow: 0 15px 40px rgba(255, 46, 99, 0.7);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
         }
 
     .login-link {
         text-align: center;
         margin-top: 30px;
-        color: #ccc;
+        color: #636e72;
         font-size: 15px;
     }
 
         .login-link a {
-            color: #ff8fab;
+            color: #667eea;
             text-decoration: none;
             font-weight: 600;
             transition: 0.3s;
         }
 
             .login-link a:hover {
-                color: #ff2e63;
+                color: #764ba2;
                 text-decoration: underline;
             }
 
     .alert-danger {
-        background: rgba(255, 50, 80, 0.18);
-        color: #ff6b8b;
-        border: 1px solid #ff2e63;
-        border-left: 6px solid #ff2e63;
+        background: linear-gradient(135deg, #fee, #fdd);
+        color: #c33;
+        border: 1px solid #fcc;
+        border-left: 6px solid #e74c3c;
         padding: 16px;
         border-radius: 12px;
         margin-bottom: 25px;
         font-size: 14px;
+        animation: slideIn 0.3s ease-out;
     }
 
+        .alert-danger ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .alert-danger li {
+            margin: 5px 0;
+        }
+
     .alert-success-fixed {
-        background: rgba(0, 200, 100, 0.2);
-        color: #00ff9d;
-        border: 1px solid #00ff9d;
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        border: 1px solid #c3e6cb;
         padding: 14px 20px;
         border-radius: 10px;
         text-align: center;
@@ -324,8 +334,23 @@
         z-index: 1000;
         min-width: 320px;
         max-width: 90%;
-        box-shadow: 0 5px 20px rgba(0, 255, 150, 0.3);
+        box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
         animation: slideDown 0.5s ease-out;
+    }
+
+    @@keyframes slideIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     }
 
     @@keyframes slideDown {
