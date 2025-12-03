@@ -312,14 +312,18 @@ namespace web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile(string FullName, string Email, string Phone, string City, string Address)
+        public async Task<IActionResult> UpdateProfile(string FullName, string Email, string Phone, DateTime DateOfBirth,
+            string Gender, string City, string Address, string CurrentPassword, string NewPassword, string ConfirmPassword)
         {
             System.Diagnostics.Debug.WriteLine("=== UPDATE PROFILE ACTION ===");
             System.Diagnostics.Debug.WriteLine($"FullName: {FullName}");
             System.Diagnostics.Debug.WriteLine($"Email: {Email}");
             System.Diagnostics.Debug.WriteLine($"Phone: {Phone}");
+            System.Diagnostics.Debug.WriteLine($"DateOfBirth: {DateOfBirth}");
+            System.Diagnostics.Debug.WriteLine($"Gender: {Gender}");
             System.Diagnostics.Debug.WriteLine($"City: {City}");
             System.Diagnostics.Debug.WriteLine($"Address: {Address}");
+            System.Diagnostics.Debug.WriteLine($"Password Change Attempted: {!string.IsNullOrEmpty(CurrentPassword)}");
 
             var userId = HttpContext.Session.GetInt32("UserId");
             if (!userId.HasValue)
@@ -332,10 +336,10 @@ namespace web.Controllers
 
             // Validate inputs
             if (string.IsNullOrWhiteSpace(FullName) || string.IsNullOrWhiteSpace(Email) ||
-                string.IsNullOrWhiteSpace(Phone) || string.IsNullOrWhiteSpace(City) ||
-                string.IsNullOrWhiteSpace(Address))
+                string.IsNullOrWhiteSpace(Phone) || string.IsNullOrWhiteSpace(Gender) ||
+                string.IsNullOrWhiteSpace(City) || string.IsNullOrWhiteSpace(Address))
             {
-                TempData["Error"] = "All fields are required.";
+                TempData["Error"] = "All basic information fields are required.";
                 return RedirectToAction("Index");
             }
 
@@ -343,6 +347,48 @@ namespace web.Controllers
             {
                 TempData["Error"] = "Phone number must be exactly 11 digits.";
                 return RedirectToAction("Index");
+            }
+
+            // Validate date of birth (must be on or before Dec 31, 2010)
+            var maxDate = new DateTime(2010, 12, 31);
+            if (DateOfBirth > maxDate)
+            {
+                TempData["Error"] = "You must be born on or before December 31, 2010 (at least 15 years old).";
+                return RedirectToAction("Index");
+            }
+
+            // Validate password change if attempted
+            bool passwordChangeAttempted = !string.IsNullOrEmpty(CurrentPassword) ||
+                                          !string.IsNullOrEmpty(NewPassword) ||
+                                          !string.IsNullOrEmpty(ConfirmPassword);
+
+            if (passwordChangeAttempted)
+            {
+                if (string.IsNullOrEmpty(CurrentPassword))
+                {
+                    TempData["Error"] = "Please enter your current password to change it.";
+                    return RedirectToAction("Index");
+                }
+                if (string.IsNullOrEmpty(NewPassword))
+                {
+                    TempData["Error"] = "Please enter a new password.";
+                    return RedirectToAction("Index");
+                }
+                if (string.IsNullOrEmpty(ConfirmPassword))
+                {
+                    TempData["Error"] = "Please confirm your new password.";
+                    return RedirectToAction("Index");
+                }
+                if (NewPassword != ConfirmPassword)
+                {
+                    TempData["Error"] = "New passwords do not match.";
+                    return RedirectToAction("Index");
+                }
+                if (NewPassword.Length < 6)
+                {
+                    TempData["Error"] = "New password must be at least 6 characters.";
+                    return RedirectToAction("Index");
+                }
             }
 
             try
@@ -354,10 +400,26 @@ namespace web.Controllers
                     return RedirectToAction("Index", "UserLogin");
                 }
 
+                // If password change is attempted, verify current password
+                if (passwordChangeAttempted)
+                {
+                    if (user.PasswordHash != CurrentPassword)
+                    {
+                        TempData["Error"] = "Current password is incorrect.";
+                        return RedirectToAction("Index");
+                    }
+
+                    // Update password
+                    user.PasswordHash = NewPassword;
+                    System.Diagnostics.Debug.WriteLine("Password updated successfully!");
+                }
+
                 // Update user information
                 user.FullName = FullName.Trim();
                 user.Email = Email.Trim();
                 user.Phone = Phone.Trim();
+                user.DateOfBirth = DateOfBirth;
+                user.Gender = Gender.Trim();
                 user.City = City.Trim();
                 user.Address = Address.Trim();
 
@@ -369,7 +431,15 @@ namespace web.Controllers
                 // Update session
                 HttpContext.Session.SetString("UserName", user.FullName);
 
-                TempData["Success"] = "Profile updated successfully!";
+                if (passwordChangeAttempted)
+                {
+                    TempData["Success"] = "Profile and password updated successfully!";
+                }
+                else
+                {
+                    TempData["Success"] = "Profile updated successfully!";
+                }
+
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
