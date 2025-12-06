@@ -1,4 +1,4 @@
-﻿// NGODashboard.js - Complete with Animations
+﻿// NGODashboard.js - Complete with Fixed Animations
 
 (function () {
     'use strict';
@@ -89,15 +89,27 @@
         const colors = {
             error: {
                 gradient: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
-                confetti: ['#dc3545', '#c82333', '#ff6b6b']
+                confetti: ['#dc3545', '#c82333', '#ff6b6b', '#e74c3c']
+            },
+            reject: {
+                gradient: 'linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%)',
+                confetti: ['#ff6b6b', '#ff8e53', '#ff9a76', '#ffa94d']
             },
             success: {
                 gradient: 'linear-gradient(135deg, #28a745 0%, #218838 100%)',
-                confetti: ['#28a745', '#218838', '#48c774']
+                confetti: ['#28a745', '#218838', '#48c774', '#51cf66']
             },
             donate: {
                 gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 confetti: ['#667eea', '#764ba2', '#98a0f8', '#8a6ab8']
+            },
+            fulfill: {
+                gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                confetti: ['#43e97b', '#38f9d7', '#51cf66', '#20c997']
+            },
+            accept: {
+                gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                confetti: ['#4facfe', '#00f2fe', '#4fc3f7', '#29b6f6']
             }
         };
         const theme = colors[actionType] || colors.success;
@@ -123,13 +135,14 @@
             borderRadius: '20px',
             textAlign: 'center',
             minWidth: '350px',
-            animation: 'popIn 0.3s ease-out forwards'
+            animation: 'popIn 0.3s ease-out forwards',
+            boxShadow: '0 25px 70px rgba(0,0,0,0.5)'
         });
 
         box.innerHTML = `
             <div style="font-size: 64px; margin-bottom: 20px; animation: bounce 0.6s ease-in-out;">${emoji}</div>
-            <h2 style="color: white; margin: 0 0 15px 0; font-size: 28px;">${title}</h2>
-            <p style="color: rgba(255,255,255,0.95); font-size: 16px;">${message}</p>
+            <h2 style="color: white; margin: 0 0 15px 0; font-size: 28px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">${title}</h2>
+            <p style="color: rgba(255,255,255,0.95); font-size: 16px; font-weight: 500;">${message}</p>
         `;
 
         document.body.appendChild(overlay);
@@ -275,49 +288,55 @@
     // ==================== ACTION FUNCTIONS ====================
     window.acceptRequest = function (requestId) {
         window.showConfirmModal('✓ Accept Request', 'Are you sure you want to accept this welfare request?', () => {
-            window.showActionSuccessAnimation('✅', 'Accepted!', 'Request accepted successfully!', 'success');
-            setTimeout(() => {
-                const f = document.createElement('form');
-                f.method = 'POST';
-                f.action = '/NGO/AcceptRequest';
-                const i = document.createElement('input');
-                i.type = 'hidden';
-                i.name = 'requestId';
-                i.value = requestId;
-                f.appendChild(i);
-                document.body.appendChild(f);
-                f.submit();
-            }, 2500);
+            // Save pending animation BEFORE submitting
+            saveCurrentTab();
+            sessionStorage.setItem('pendingAnimation', 'acceptRequest');
+
+            const f = document.createElement('form');
+            f.method = 'POST';
+            f.action = '/NGO/AcceptRequest';
+            const i = document.createElement('input');
+            i.type = 'hidden';
+            i.name = 'requestId';
+            i.value = requestId;
+            f.appendChild(i);
+            document.body.appendChild(f);
+            f.submit();
         });
     };
 
     window.rejectRequest = function (requestId) {
         window.showInputModal('✗ Reject Request', 'Please provide a reason for rejection:', 'Enter rejection reason...', (reason) => {
             if (reason) {
-                window.showActionSuccessAnimation('❌', 'Rejected', 'Request has been rejected.', 'error');
-                setTimeout(() => {
-                    const f = document.createElement('form');
-                    f.method = 'POST';
-                    f.action = '/NGO/RejectRequest';
-                    const i1 = document.createElement('input');
-                    i1.type = 'hidden';
-                    i1.name = 'requestId';
-                    i1.value = requestId;
-                    const i2 = document.createElement('input');
-                    i2.type = 'hidden';
-                    i2.name = 'reason';
-                    i2.value = reason;
-                    f.appendChild(i1);
-                    f.appendChild(i2);
-                    document.body.appendChild(f);
-                    f.submit();
-                }, 2500);
+                // Save pending animation BEFORE submitting
+                saveCurrentTab();
+                sessionStorage.setItem('pendingAnimation', 'rejectRequest');
+
+                const f = document.createElement('form');
+                f.method = 'POST';
+                f.action = '/NGO/RejectRequest';
+                const i1 = document.createElement('input');
+                i1.type = 'hidden';
+                i1.name = 'requestId';
+                i1.value = requestId;
+                const i2 = document.createElement('input');
+                i2.type = 'hidden';
+                i2.name = 'reason';
+                i2.value = reason;
+                f.appendChild(i1);
+                f.appendChild(i2);
+                document.body.appendChild(f);
+                f.submit();
             }
         });
     };
 
     window.fulfillRequest = function (requestId) {
         window.showConfirmModal('🎁 Fulfill Request', 'Are you sure you want to fulfill this request? Resources will be sent to the welfare fund.', () => {
+            // Save pending animation BEFORE submitting
+            saveCurrentTab();
+            sessionStorage.setItem('pendingAnimation', 'fulfillRequest');
+
             const f = document.createElement('form');
             f.method = 'POST';
             f.action = '/NGO/FulfillRequest';
@@ -501,12 +520,6 @@
             sessionStorage.setItem('pendingAnimation', 'updatePassword');
             form.submit();
         }
-        else if (action && action.includes('/NGO/FulfillRequest')) {
-            e.preventDefault();
-            saveCurrentTab();
-            sessionStorage.setItem('pendingAnimation', 'fulfillRequest');
-            form.submit();
-        }
     });
 
     // ==================== CSS ====================
@@ -682,7 +695,11 @@
                     } else if (pendingAnimation === 'updatePassword') {
                         window.showActionSuccessAnimation('🔒', 'Password Updated!', 'Your password has been changed successfully!', 'success');
                     } else if (pendingAnimation === 'fulfillRequest') {
-                        window.showActionSuccessAnimation('🎁', 'Request Fulfilled!', 'Welfare request has been fulfilled successfully!', 'success');
+                        window.showActionSuccessAnimation('🎁', 'Request Fulfilled!', 'Welfare request has been fulfilled successfully!', 'fulfill');
+                    } else if (pendingAnimation === 'acceptRequest') {
+                        window.showActionSuccessAnimation('✅', 'Request Accepted!', 'Welfare request has been accepted successfully!', 'accept');
+                    } else if (pendingAnimation === 'rejectRequest') {
+                        window.showActionSuccessAnimation('❌', 'Request Rejected', 'The welfare request has been rejected.', 'reject');
                     }
                 } else if (tempDataError) {
                     const errorType = tempDataError.dataset.errorType;
