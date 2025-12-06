@@ -6,22 +6,22 @@
     <div class="stats-card">
         <div class="stat-item">
             <div class="stat-icon">📊</div>
-            <div class="stat-number">@ViewBag.TotalRequests</div>
+            <div class="stat-number">@(ViewBag.TotalRequests ?? 0)</div>
             <div class="stat-label">Total Requests</div>
         </div>
         <div class="stat-item">
             <div class="stat-icon">⏳</div>
-            <div class="stat-number">@ViewBag.PendingCount</div>
+            <div class="stat-number">@(ViewBag.PendingCount ?? 0)</div>
             <div class="stat-label">Pending</div>
         </div>
         <div class="stat-item">
             <div class="stat-icon">✓</div>
-            <div class="stat-number">@ViewBag.ApprovedCount</div>
+            <div class="stat-number">@(ViewBag.ApprovedCount ?? 0)</div>
             <div class="stat-label">Approved</div>
         </div>
         <div class="stat-item">
             <div class="stat-icon">🎉</div>
-            <div class="stat-number">@ViewBag.FulfilledCount</div>
+            <div class="stat-number">@(ViewBag.FulfilledCount ?? 0)</div>
             <div class="stat-label">Fulfilled</div>
         </div>
         <div class="stat-item">
@@ -46,7 +46,7 @@
             <div>
                 <div class="inventory-label">Current Balance</div>
                 <div class="inventory-value" style="color: #28a745; font-weight: 700;">
-                    PKR @(((decimal)ViewBag.CurrentBalance).ToString("N0"))
+                    PKR @(((decimal?)ViewBag.CurrentBalance ?? 0).ToString("N0"))
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
             <div>
                 <div class="inventory-label">Food Units</div>
                 <div class="inventory-value" style="color: #667eea; font-weight: 700;">
-                    @ViewBag.FoodInventory units
+                    @(ViewBag.FoodInventory ?? 0) units
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
             <div>
                 <div class="inventory-label">Male Clothes</div>
                 <div class="inventory-value" style="color: #17a2b8; font-weight: 700;">
-                    @ViewBag.MaleClothes items
+                    @(ViewBag.MaleClothes ?? 0) items
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
             <div>
                 <div class="inventory-label">Female Clothes</div>
                 <div class="inventory-value" style="color: #e83e8c; font-weight: 700;">
-                    @ViewBag.FemaleClothes items
+                    @(ViewBag.FemaleClothes ?? 0) items
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
             <div>
                 <div class="inventory-label">Kids Clothes</div>
                 <div class="inventory-value" style="color: #ffc107; font-weight: 700;">
-                    @ViewBag.KidsClothes items
+                    @(ViewBag.KidsClothes ?? 0) items
                 </div>
             </div>
         </div>
@@ -91,7 +91,7 @@
             <div>
                 <div class="inventory-label">Shelter Available</div>
                 <div class="inventory-value" style="color: #764ba2; font-weight: 700;">
-                    @ViewBag.ShelterAvailable rooms
+                    @(ViewBag.ShelterAvailable ?? 0) rooms
                 </div>
             </div>
         </div>

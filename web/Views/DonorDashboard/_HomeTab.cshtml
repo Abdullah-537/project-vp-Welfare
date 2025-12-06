@@ -1,110 +1,77 @@
-﻿<!-- Home/Dashboard Tab -->
-<div id="home" class="content-card active">
-    <h2 class="content-title">📊 Dashboard Overview</h2>
+﻿<div id="home" class="content-card active">
+    <h2 class="content-title">Dashboard Overview</h2>
 
-    <!-- Statistics Cards -->
     <div class="stats-card">
         <div class="stat-item">
-            <div class="stat-icon">📊</div>
-            <div class="stat-number">@ViewBag.TotalRequests</div>
-            <div class="stat-label">Total Requests</div>
+            <div class="stat-number">@(ViewBag.TotalDonations ?? 0)</div>
+            <div class="stat-label">Total Donations</div>
         </div>
         <div class="stat-item">
-            <div class="stat-icon">⏳</div>
-            <div class="stat-number">@ViewBag.PendingCount</div>
-            <div class="stat-label">Pending</div>
+            <div class="stat-number">@(ViewBag.DonationHistory != null ? ((List<object>)ViewBag.DonationHistory).Count(d => ((dynamic)d).Type == "Food") : 0)</div>
+            <div class="stat-label">Food Donations</div>
         </div>
         <div class="stat-item">
-            <div class="stat-icon">✓</div>
-            <div class="stat-number">@ViewBag.ApprovedCount</div>
-            <div class="stat-label">Approved</div>
+            <div class="stat-number">@(ViewBag.DonationHistory != null ? ((List<object>)ViewBag.DonationHistory).Count(d => ((dynamic)d).Type == "Clothes") : 0)</div>
+            <div class="stat-label">Clothes Donations</div>
         </div>
         <div class="stat-item">
-            <div class="stat-icon">🎉</div>
-            <div class="stat-number">@ViewBag.FulfilledCount</div>
-            <div class="stat-label">Fulfilled</div>
+            <div class="stat-number">@(ViewBag.DonationHistory != null ? ((List<object>)ViewBag.DonationHistory).Count(d => ((dynamic)d).Type == "Money") : 0)</div>
+            <div class="stat-label">Money Donations</div>
         </div>
     </div>
 
-    <!-- Inventory Overview -->
-    <h3 style="color: var(--accent-start); margin: 30px 0 15px 0; font-size: 20px; font-weight: 700;">💰 Welfare Fund Resources</h3>
-    <div class="inventory-grid">
-        <div class="inventory-item">
-            <div class="inventory-icon">💵</div>
-            <div>
-                <div class="inventory-label">Current Balance</div>
-                <div class="inventory-value">PKR @(((decimal)ViewBag.CurrentBalance).ToString("N0"))</div>
-            </div>
+    <div class="action-cards">
+        <div class="action-card card-food" onclick="showSection({currentTarget: document.querySelector('.nav-link:nth-child(3)')}, 'food')">
+            <div class="card-icon">🍲</div>
+            <h3>Donate Food</h3>
+            <p>Help feed families in need</p>
         </div>
-        <div class="inventory-item">
-            <div class="inventory-icon">🍲</div>
-            <div>
-                <div class="inventory-label">Food Units</div>
-                <div class="inventory-value">@ViewBag.FoodInventory</div>
-            </div>
+        <div class="action-card card-clothes" onclick="showSection({currentTarget: document.querySelector('.nav-link:nth-child(4)')}, 'clothes')">
+            <div class="card-icon">👕</div>
+            <h3>Donate Clothes</h3>
+            <p>Share warmth and comfort</p>
         </div>
-        <div class="inventory-item">
-            <div class="inventory-icon">👔</div>
-            <div>
-                <div class="inventory-label">Male Clothes</div>
-                <div class="inventory-value">@ViewBag.MaleClothes</div>
-            </div>
-        </div>
-        <div class="inventory-item">
-            <div class="inventory-icon">👗</div>
-            <div>
-                <div class="inventory-label">Female Clothes</div>
-                <div class="inventory-value">@ViewBag.FemaleClothes</div>
-            </div>
-        </div>
-        <div class="inventory-item">
-            <div class="inventory-icon">👶</div>
-            <div>
-                <div class="inventory-label">Kids Clothes</div>
-                <div class="inventory-value">@ViewBag.KidsClothes</div>
-            </div>
-        </div>
-        <div class="inventory-item">
-            <div class="inventory-icon">🏠</div>
-            <div>
-                <div class="inventory-label">Shelter Available</div>
-                <div class="inventory-value">@ViewBag.ShelterAvailable</div>
-            </div>
+        <div class="action-card card-money" onclick="showSection({currentTarget: document.querySelector('.nav-link:nth-child(5)')}, 'money')">
+            <div class="card-icon">💰</div>
+            <h3>Donate Money</h3>
+            <p>Support our programs</p>
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <h3 style="color: var(--accent-start); margin: 40px 0 20px 0; font-size: 20px; font-weight: 700;">⚡ Quick Actions</h3>
-    <div class="actions-grid">
-        <div class="action-card card-requests" onclick="showSection(event, 'requests')">
-            <div class="card-icon">📋</div>
-            <h3>Review Requests</h3>
-            <p>@ViewBag.PendingCount pending requests awaiting review</p>
+    @if (ViewBag.DonationHistory != null && ((List<object>)ViewBag.DonationHistory).Count > 0)
+    {
+        <div class="recent-donations">
+            <h3>Recent Donations</h3>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var donation in ((List<object>)ViewBag.DonationHistory).Take(5))
+                    {
+                        var d = (dynamic)donation;
+                        <tr>
+                            <td>@d.Date</td>
+                            <td>@d.Type</td>
+                            <td>@d.Description</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-        <div class="action-card card-users" onclick="showSection(event, 'users')">
-            <div class="card-icon">👥</div>
-            <h3>Manage Users</h3>
-            <p>View and control all user accounts</p>
+    }
+    else
+    {
+        <div class="no-history">
+            <div class="empty-icon">🎁</div>
+            <h3>Start Your Giving Journey</h3>
+            <p>Make your first donation today and help those in need</p>
         </div>
-        <div class="action-card card-ngos" onclick="showSection(event, 'ngos')">
-            <div class="card-icon">🏢</div>
-            <h3>Manage NGOs</h3>
-            <p>Add and verify NGO partners</p>
-        </div>
-        <div class="action-card card-ngo-requests" onclick="showSection(event, 'ngo-requests')">
-            <div class="card-icon">📤</div>
-            <h3>NGO Requests</h3>
-            <p>Request support from verified NGOs</p>
-        </div>
-        <div class="action-card card-transactions" onclick="showSection(event, 'transactions')">
-            <div class="card-icon">💳</div>
-            <h3>View Transactions</h3>
-            <p>Track all welfare disbursements</p>
-        </div>
-        <div class="action-card card-users" onclick="showSection(event, 'admins')">
-            <div class="card-icon">👨‍💼</div>
-            <h3>Manage Admins</h3>
-            <p>Add and control administrators</p>
-        </div>
-    </div>
+    }
 </div>
