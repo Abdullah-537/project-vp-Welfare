@@ -20,24 +20,24 @@ namespace web.Models
 
         public DateTime DonationDate { get; set; }
 
-        // For Food Donations
+        // For Food Donations - ✅ ALL MADE NULLABLE
         public int? FoodQuantity { get; set; }
-        public string FoodUnit { get; set; }
-        public string FoodDescription { get; set; }
+        public string? FoodUnit { get; set; }
+        public string? FoodDescription { get; set; }
 
-        // For Clothes Donations
+        // For Clothes Donations - ✅ ALL MADE NULLABLE
         public int? MaleClothesQuantity { get; set; }
         public int? FemaleClothesQuantity { get; set; }
         public int? KidsClothesQuantity { get; set; }
-        public string ClothesSize { get; set; }
-        public string ClothesType { get; set; }
-        public string ClothesDescription { get; set; }
+        public string? ClothesSize { get; set; }
+        public string? ClothesType { get; set; }
+        public string? ClothesDescription { get; set; }
 
-        // For Shelter Donations
+        // For Shelter Donations - ✅ ALL MADE NULLABLE
         public int? ShelterBeds { get; set; }
-        public string ShelterDescription { get; set; }
+        public string? ShelterDescription { get; set; }
 
-        public string ItemDescription { get; set; }
+        public string? ItemDescription { get; set; } // ✅ MADE NULLABLE
 
         // Balance after this transaction
         public decimal WelfareBalanceAfter { get; set; }

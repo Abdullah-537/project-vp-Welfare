@@ -54,7 +54,8 @@ namespace web.Controllers
                             return View();
                         }
 
-                        HttpContext.Session.SetInt32("NGOId", id);
+                        // FIXED: Changed from "NGOId" to "NgoId" to match NGOController
+                        HttpContext.Session.SetInt32("NgoId", id);
                         HttpContext.Session.SetString("UserType", "NGO");
                         TempData["Success"] = "NGO login successful.";
                         return RedirectToAction("Index", "NGO");
