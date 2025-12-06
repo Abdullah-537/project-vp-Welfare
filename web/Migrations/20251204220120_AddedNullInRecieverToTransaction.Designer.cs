@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using web.Data;
 
@@ -11,9 +12,11 @@ using web.Data;
 namespace web.Migrations
 {
     [DbContext(typeof(WelfareDb))]
-    partial class WelfareDbModelSnapshot : ModelSnapshot
+    [Migration("20251204220120_AddedNullInRecieverToTransaction")]
+    partial class AddedNullInRecieverToTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,8 +112,8 @@ namespace web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("WelfareBalanceAfter")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("TransactionId");
 
@@ -545,8 +548,8 @@ namespace web.Migrations
                             FoodInventoryUnits = 100000,
                             FoodUnit = "rations",
                             KidsClothesInventory = 500,
-                            LastMonthlyReset = new DateTime(2025, 12, 6, 12, 33, 7, 480, DateTimeKind.Local).AddTicks(6668),
-                            LastUpdated = new DateTime(2025, 12, 6, 12, 33, 7, 480, DateTimeKind.Local).AddTicks(6641),
+                            LastMonthlyReset = new DateTime(2025, 12, 5, 3, 1, 10, 737, DateTimeKind.Local).AddTicks(7732),
+                            LastUpdated = new DateTime(2025, 12, 5, 3, 1, 10, 737, DateTimeKind.Local).AddTicks(7710),
                             MaleClothesInventory = 1000,
                             MonthlyAllocation = 1000000m,
                             MonthlyFemaleClothesAllocation = 500,
@@ -581,6 +584,7 @@ namespace web.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("FoodUnit")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("FulfilledAmount")
@@ -615,6 +619,7 @@ namespace web.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("NgoResponse")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RequestDate")
@@ -786,7 +791,7 @@ namespace web.Migrations
                     b.HasOne("web.Models.AdminLogin", "ApprovedByAdmin")
                         .WithMany("ReceiverApprovals")
                         .HasForeignKey("ApprovedByAdminId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("web.Models.UserLoginConfidentials", "Receiver")
                         .WithMany()
@@ -797,7 +802,7 @@ namespace web.Migrations
                     b.HasOne("web.Models.ReceiverRequest", "Request")
                         .WithMany()
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ApprovedByAdmin");

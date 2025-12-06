@@ -45,7 +45,6 @@ namespace web.Data
                 .HasIndex(n => n.Email)
                 .IsUnique();
 
- 
             // ReceiverRequest relationships
             modelBuilder.Entity<ReceiverRequest>()
                 .HasOne(r => r.Receiver)
@@ -69,19 +68,6 @@ namespace web.Data
 
             // WelfareToReceiverTransaction relationships
             modelBuilder.Entity<WelfareToReceiverTransaction>()
-                .HasOne(w => w.Request)
-                .WithMany()
-                .HasForeignKey(w => w.RequestId)
-                .OnDelete(DeleteBehavior.Restrict);
-           
-            modelBuilder.Entity<DonorToWelfareTransaction>(entity =>
-            {
-                entity.Property(e => e.WelfareBalanceAfter)
-                    .HasPrecision(18, 4); // Adjust precision/scale as needed
-                                          // 18 total digits, 4 decimal places
-            });
-
-            modelBuilder.Entity<WelfareToReceiverTransaction>()
                 .HasOne(w => w.Receiver)
                 .WithMany()
                 .HasForeignKey(w => w.ReceiverId)
@@ -91,28 +77,34 @@ namespace web.Data
                 .HasOne(w => w.ApprovedByAdmin)
                 .WithMany(a => a.ReceiverApprovals)
                 .HasForeignKey(w => w.ApprovedByAdminId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<WelfareToReceiverTransaction>()
+                .HasOne(w => w.Request)
+                .WithMany()
+                .HasForeignKey(w => w.RequestId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // WelfareToNGORequest relationships
             modelBuilder.Entity<WelfareToNGORequest>()
-                .HasOne(r => r.Admin)
+                .HasOne(w => w.Admin)
                 .WithMany(a => a.NGORequests)
-                .HasForeignKey(r => r.AdminId)
+                .HasForeignKey(w => w.AdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<WelfareToNGORequest>()
-                .HasOne(r => r.Ngo)
+                .HasOne(w => w.Ngo)
                 .WithMany(n => n.WelfareRequests)
-                .HasForeignKey(r => r.NgoId)
+                .HasForeignKey(w => w.NgoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Decimal precision for all monetary fields
-            modelBuilder.Entity<ReceiverRequest>()
-                .Property(r => r.RequestedAmount)
+            // Precision for decimal properties
+            modelBuilder.Entity<DonorToWelfareTransaction>()
+                .Property(d => d.MonetaryAmount)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<DonorToWelfareTransaction>()
-                .Property(d => d.MonetaryAmount)
+                .Property(d => d.WelfareBalanceAfter)
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<NGOToWelfareTransaction>()
@@ -131,6 +123,14 @@ namespace web.Data
                 .Property(w => w.WelfareBalanceAfter)
                 .HasPrecision(18, 2);
 
+            modelBuilder.Entity<WelfareToReceiverTransaction>()
+                .Property(w => w.MonthlyRepaymentAmount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ReceiverRequest>()
+                .Property(r => r.RequestedAmount)
+                .HasPrecision(18, 2);
+
             modelBuilder.Entity<WelfareToNGORequest>()
                 .Property(r => r.RequestedAmount)
                 .HasPrecision(18, 2);
@@ -139,6 +139,7 @@ namespace web.Data
                 .Property(r => r.FulfilledAmount)
                 .HasPrecision(18, 2);
 
+            // WelfareFund decimal precision
             modelBuilder.Entity<WelfareFund>()
                 .Property(w => w.CurrentBalance)
                 .HasPrecision(18, 2);
@@ -147,6 +148,7 @@ namespace web.Data
                 .Property(w => w.MonthlyAllocation)
                 .HasPrecision(18, 2);
 
+            // MonthlyAllocationLog decimal precision
             modelBuilder.Entity<MonthlyAllocationLog>()
                 .Property(m => m.MoneyAllocated)
                 .HasPrecision(18, 2);
@@ -159,7 +161,10 @@ namespace web.Data
                 .Property(m => m.BalanceAfter)
                 .HasPrecision(18, 2);
 
-            // Seed initial data
+            // ============================================
+            // SEED INITIAL DATA
+            // ============================================
+
             modelBuilder.Entity<WelfareFund>().HasData(
                 new WelfareFund
                 {

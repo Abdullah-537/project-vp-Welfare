@@ -17,41 +17,39 @@ namespace web.Models
         public virtual UserLoginConfidentials Receiver { get; set; }
 
         [ForeignKey("AdminLogin")]
-        public int ApprovedByAdminId { get; set; }
+        public int? ApprovedByAdminId { get; set; }
         public virtual AdminLogin ApprovedByAdmin { get; set; }
 
         [Required]
-        public string TransactionType { get; set; } // Food, Clothes, Loan, Shelter
+        public string TransactionType { get; set; } // Shelter, Clothes, Loan, Food
+
+        public decimal MonetaryAmount { get; set; }
+
+        public decimal WelfareBalanceAfter { get; set; }
 
         public DateTime TransactionDate { get; set; }
 
-        // For Money/Loan Transactions
-        [Range(0, double.MaxValue)]
-        public decimal MonetaryAmount { get; set; }
-
-        // For Food Distribution
-        public int? FamilyMembers { get; set; }
-        public int? FoodQuantityGiven { get; set; }
-        public string FoodUnit { get; set; }
-
-        // For Clothes Distribution
-        public int? MaleClothesGiven { get; set; }
-        public int? FemaleClothesGiven { get; set; }
-        public int? KidsClothesGiven { get; set; }
-        public string ClothesSize { get; set; }
-        public string ClothesType { get; set; }
-
-        // For Shelter
-        public int? ShelterDays { get; set; }
-        public int? RoomsAllocated { get; set; }
+        [Required]
+        public string Status { get; set; } // Approved, Fulfilled, Completed
 
         public string Description { get; set; }
 
-        // Balance after this transaction
-        public decimal WelfareBalanceAfter { get; set; }
-        public int? FoodInventoryAfter { get; set; }
-        public int? MaleClothesInventoryAfter { get; set; }
-        public int? FemaleClothesInventoryAfter { get; set; }
-        public int? KidsClothesInventoryAfter { get; set; }
+        // For Food Transactions
+        public int? FoodUnitsProvided { get; set; }
+
+        // For Clothes Transactions
+        public int? MaleClothesProvided { get; set; }
+        public int? FemaleClothesProvided { get; set; }
+        public int? KidsClothesProvided { get; set; }
+
+        // For Shelter Transactions
+        public DateTime? ShelterStartDate { get; set; }
+        public DateTime? ShelterEndDate { get; set; }
+        public int? RoomsAllocated { get; set; }
+
+        // For Loan Transactions - ✅ MADE NULLABLE
+        public string? LoanPurpose { get; set; }
+        public int? RepaymentMonths { get; set; }
+        public decimal? MonthlyRepaymentAmount { get; set; }
     }
 }

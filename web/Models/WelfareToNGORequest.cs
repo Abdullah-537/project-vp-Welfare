@@ -27,7 +27,7 @@ namespace web.Models
 
         // For Food Requests
         public int? FoodQuantity { get; set; }
-        public string FoodUnit { get; set; }
+        public string? FoodUnit { get; set; } // ✅ MADE NULLABLE
 
         // For Clothes Requests
         public int? MaleClothesQuantity { get; set; }
@@ -37,13 +37,14 @@ namespace web.Models
         // For Shelter Requests
         public int? ShelterBeds { get; set; }
 
-        public string Status { get; set; } // Pending, Accepted, Rejected, Fulfilled
+        [Required]
+        public string Status { get; set; } = "Pending"; // ✅ ADDED DEFAULT VALUE
 
         public DateTime RequestDate { get; set; }
 
         public DateTime? ResponseDate { get; set; }
 
-        public string NgoResponse { get; set; }
+        public string? NgoResponse { get; set; } // ✅ MADE NULLABLE
 
         // Fulfilled amounts
         public decimal? FulfilledAmount { get; set; }

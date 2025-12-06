@@ -47,10 +47,17 @@ namespace web.Controllers
                     var ngo = await _context.NGOsLogins.FindAsync(id);
                     if (ngo != null && ngo.PasswordHash == Password)
                     {
+                        // Check if NGO is active
+                        if (!ngo.IsActive)
+                        {
+                            ViewBag.Error = "Your NGO account has been deactivated. Please contact support.";
+                            return View();
+                        }
+
                         HttpContext.Session.SetInt32("NGOId", id);
                         HttpContext.Session.SetString("UserType", "NGO");
                         TempData["Success"] = "NGO login successful.";
-                        return RedirectToAction("Dashboard", "NGO");
+                        return RedirectToAction("Index", "NGO");
                     }
                     break;
 
@@ -60,8 +67,9 @@ namespace web.Controllers
                     {
                         HttpContext.Session.SetInt32("AdminId", id);
                         HttpContext.Session.SetString("UserType", "Admin");
-                        TempData["Success"] = "Admin login successful.";
-                        return RedirectToAction("Dashboard", "Admin");
+                        TempData["Success"] = $"Welcome back, {admin.FullName}!";
+                        // FIXED: Changed from "Dashboard" to "Index"
+                        return RedirectToAction("Index", "Admin");
                     }
                     break;
 

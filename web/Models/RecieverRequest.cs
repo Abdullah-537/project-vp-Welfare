@@ -19,9 +19,10 @@ namespace web.Models
         public string Description { get; set; }
 
         [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Amount must be greater than 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Amount must be greater than or equal to 0")]
         public decimal RequestedAmount { get; set; }
 
+        [Required]
         public string Status { get; set; } // Pending, Approved, Rejected, Fulfilled
 
         public DateTime RequestDate { get; set; }
@@ -31,23 +32,21 @@ namespace web.Models
         public DateTime? FulfilledDate { get; set; }
 
         // For Food Requests
-        public int? FamilyMembers { get; set; } // Number of family members
-        public int? FoodQuantity { get; set; } // Number of ration units requested
-        public string FoodUnit { get; set; } // rations, kg, packages
+        public int? FamilyMembers { get; set; }
+        public int? FoodQuantity { get; set; }
 
         // For Clothes Requests
         public int? MaleClothesQuantity { get; set; }
         public int? FemaleClothesQuantity { get; set; }
         public int? KidsClothesQuantity { get; set; }
-        public string ClothesSize { get; set; } // S, M, L, XL, XXL
-        public string ClothesType { get; set; } // Winter, Summer, Formal, Casual
+        public string? ClothesType { get; set; } // Winter, Summer, Formal, Casual
 
         // For Shelter Requests
         public int? ShelterDurationDays { get; set; }
         public int? RequiredRooms { get; set; }
 
         // For Loan Requests
-        public string LoanPurpose { get; set; }
+        public string? LoanPurpose { get; set; }
         public int? RepaymentMonths { get; set; }
     }
 }
