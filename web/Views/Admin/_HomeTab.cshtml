@@ -25,6 +25,11 @@
             <div class="stat-label">Fulfilled</div>
         </div>
         <div class="stat-item">
+            <div class="stat-icon">✗</div>
+            <div class="stat-number">@(ViewBag.RejectedCount ?? 0)</div>
+            <div class="stat-label">Rejected</div>
+        </div>
+        <div class="stat-item">
             <div class="stat-icon">💝</div>
             <div class="stat-number">@(ViewBag.TotalDonations ?? 0)</div>
             <div class="stat-label">Total Donations</div>
@@ -115,8 +120,26 @@
             </p>
         </div>
 
-        <div class="action-card card-users" onclick="showSection(event, 'users')" style="cursor: pointer;">
+        <div class="action-card card-donor-donations" onclick="showSection(event, 'donations'); setTimeout(() => showDonationType('donor'), 100);" style="cursor: pointer;">
             <div class="card-icon">👥</div>
+            <h3>Donor Donations</h3>
+            <p style="font-size: 14px; color: var(--muted);">
+                <strong style="color: var(--accent-start); font-size: 18px;">@(ViewBag.TotalDonorDonations ?? 0)</strong>
+                donations from individuals
+            </p>
+        </div>
+
+        <div class="action-card card-ngo-donations" onclick="showSection(event, 'donations'); setTimeout(() => showDonationType('ngo'), 100);" style="cursor: pointer;">
+            <div class="card-icon">🏢</div>
+            <h3>NGO Donations</h3>
+            <p style="font-size: 14px; color: var(--muted);">
+                <strong style="color: var(--accent-start); font-size: 18px;">@(ViewBag.TotalNGODonations ?? 0)</strong>
+                donations from NGO partners
+            </p>
+        </div>
+
+        <div class="action-card card-users" onclick="showSection(event, 'users')" style="cursor: pointer;">
+            <div class="card-icon">👤</div>
             <h3>Manage Users</h3>
             <p style="font-size: 14px; color: var(--muted);">
                 View and control all user accounts
@@ -124,7 +147,7 @@
         </div>
 
         <div class="action-card card-ngos" onclick="showSection(event, 'ngos')" style="cursor: pointer;">
-            <div class="card-icon">🏢</div>
+            <div class="card-icon">🏛️</div>
             <h3>Manage NGOs</h3>
             <p style="font-size: 14px; color: var(--muted);">
                 Add and verify NGO partners

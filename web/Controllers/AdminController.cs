@@ -92,6 +92,7 @@ namespace web.Controllers
             ViewBag.PendingCount = allRequests.Count(r => r.Status == "Pending");
             ViewBag.ApprovedCount = allRequests.Count(r => r.Status == "Approved");
             ViewBag.FulfilledCount = allRequests.Count(r => r.Status == "Fulfilled");
+            ViewBag.RejectedCount = allRequests.Count(r => r.Status == "Rejected");
 
             // All Users
             var users = await _context.UserLoginConfidentials.OrderBy(u => u.FullName).ToListAsync();
