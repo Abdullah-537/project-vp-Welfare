@@ -428,15 +428,19 @@ namespace web.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Check for duplicate NGO ID - SPECIFIC ERROR
             if (await _context.NGOsLogins.AnyAsync(n => n.NgoId == NgoId))
             {
-                TempData["Error"] = "NGO ID already exists. Please use a different ID.";
+                TempData["ErrorType"] = "NGO_ID_EXISTS";
+                TempData["Error"] = $"An NGO with ID #{NgoId} already exists. Please use a different ID.";
                 return RedirectToAction("Index");
             }
 
+            // Check for duplicate Email - SPECIFIC ERROR
             if (await _context.NGOsLogins.AnyAsync(n => n.Email == Email))
             {
-                TempData["Error"] = "Email already registered. Please use a different email.";
+                TempData["ErrorType"] = "NGO_EMAIL_EXISTS";
+                TempData["Error"] = $"An NGO with email '{Email}' already exists. Please use a different email.";
                 return RedirectToAction("Index");
             }
 
@@ -461,7 +465,6 @@ namespace web.Controllers
             TempData["Success"] = "✓ NGO added and verified successfully!";
             return RedirectToAction("Index");
         }
-
         [HttpPost]
         public async Task<IActionResult> ToggleNGOStatus(int ngoId)
         {

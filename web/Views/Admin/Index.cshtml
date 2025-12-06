@@ -1,4 +1,14 @@
-﻿@{
+﻿@* Hidden markers for JavaScript animation detection - MUST BE AT TOP *@
+@if (TempData["Success"] != null)
+{
+    <div data-success-message="@TempData["Success"]" style="display:none;"></div>
+}
+@if (TempData["Error"] != null)
+{
+    <div data-error-type="@TempData["ErrorType"]" data-error-message="@TempData["Error"]" style="display:none;"></div>
+}
+
+@{
     ViewData["Title"] = "Admin Dashboard";
 }
 

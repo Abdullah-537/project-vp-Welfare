@@ -1,223 +1,224 @@
-﻿// AdminDashboard.js - Part 1: Core Functions and Animations
-// MERGE INSTRUCTION: Place this at the TOP of your JavaScript file
+﻿// AdminDashboard.js - COMPLETE FIXED VERSION - PART 1 - WITH DIAGNOSTICS
+
 (function () {
     'use strict';
 
-    function qs(sel) {
-        return document.querySelector(sel);
+    console.log('🚀 AdminDashboard.js loaded successfully');
+
+    function qs(sel) { return document.querySelector(sel); }
+    function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+
+    // ==================== VALIDATION ====================
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    function qsa(sel) {
-        return Array.from(document.querySelectorAll(sel));
+    function validatePhone(phone) {
+        return /^(\+92|0)?[0-9]{10,11}$/.test(phone.replace(/[\s\-]/g, ''));
     }
 
-    // ==================== TAB NAVIGATION ====================
-    window.showSection = function (evt, sectionName) {
-        if (evt && evt.preventDefault) {
-            evt.preventDefault();
+    function validateRegistrationNumber(regNo) {
+        return /^[A-Z0-9\-]{5,20}$/i.test(regNo);
+    }
+
+    function validateNGOId(ngoId) {
+        return ngoId >= 100000 && ngoId <= 999999;
+    }
+
+    function validatePassword(password) {
+        return password && password.length >= 6;
+    }
+
+    function validateNGOForm(formData) {
+        console.log('🔍 Validating NGO form...');
+
+        const ngoId = parseInt(formData.get('NgoId'));
+        const email = formData.get('Email');
+        const phone = formData.get('Phone');
+        const password = formData.get('Password');
+        const regNo = formData.get('RegistrationNumber');
+        const orgName = formData.get('OrganizationName');
+
+        console.log('📋 Form values:', { ngoId, orgName, email, phone, regNo });
+
+        if (!orgName || orgName.trim().length < 3) {
+            console.log('❌ Organization name validation failed');
+            window.showAlertModal('⚠️ Validation Error', 'Organization name must be at least 3 characters.');
+            return false;
         }
-        if (evt && evt.currentTarget) {
+        if (!validateNGOId(ngoId)) {
+            console.log('❌ NGO ID validation failed');
+            window.showAlertModal('⚠️ Validation Error', 'NGO ID must be 6 digits (100000-999999).');
+            return false;
+        }
+        if (!validateEmail(email)) {
+            console.log('❌ Email validation failed');
+            window.showAlertModal('⚠️ Validation Error', 'Please enter a valid email address.');
+            return false;
+        }
+        if (!validatePassword(password)) {
+            console.log('❌ Password validation failed');
+            window.showAlertModal('⚠️ Validation Error', 'Password must be at least 6 characters.');
+            return false;
+        }
+        if (!validatePhone(phone)) {
+            console.log('❌ Phone validation failed');
+            window.showAlertModal('⚠️ Validation Error', 'Please enter a valid phone number.');
+            return false;
+        }
+        if (!validateRegistrationNumber(regNo)) {
+            console.log('❌ Registration number validation failed');
+            window.showAlertModal('⚠️ Validation Error', 'Registration number must be 5-20 alphanumeric characters.');
+            return false;
+        }
+
+        console.log('✅ All validations passed!');
+        return true;
+    }
+
+    function validateAdminForm(formData) {
+        const adminId = parseInt(formData.get('AdminId'));
+        const fullName = formData.get('FullName');
+        const password = formData.get('Password');
+        const dob = new Date(formData.get('Dob'));
+
+        if (!fullName || fullName.trim().length < 3) {
+            window.showAlertModal('⚠️ Validation Error', 'Full name must be at least 3 characters.');
+            return false;
+        }
+        if (adminId <= 0) {
+            window.showAlertModal('⚠️ Validation Error', 'Admin ID must be a positive number.');
+            return false;
+        }
+        if (!validatePassword(password)) {
+            window.showAlertModal('⚠️ Validation Error', 'Password must be at least 6 characters.');
+            return false;
+        }
+
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        if (today.getMonth() < dob.getMonth() ||
+            (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        if (age < 18) {
+            window.showAlertModal('⚠️ Validation Error', 'Admin must be at least 18 years old.');
+            return false;
+        }
+        return true;
+    }
+
+    // ==================== TAB MANAGEMENT ====================
+    function saveCurrentTab() {
+        const activeTab = qs('.content-card.active');
+        if (activeTab) {
+            sessionStorage.setItem('adminActiveTab', activeTab.id);
+        }
+    }
+
+    function restoreActiveTab() {
+        const savedTab = sessionStorage.getItem('adminActiveTab');
+        if (savedTab) {
+            qsa('.content-card').forEach(c => c.classList.remove('active'));
+            qsa('.nav-link').forEach(n => n.classList.remove('active'));
+            const target = document.getElementById(savedTab);
+            if (target) {
+                target.classList.add('active');
+                const navLink = qs(`.nav-link[onclick*="${savedTab}"]`);
+                if (navLink) navLink.classList.add('active');
+            }
+        }
+    }
+
+    window.showSection = function (evt, sectionName) {
+        if (evt?.preventDefault) evt.preventDefault();
+        if (evt?.currentTarget) {
             qsa('.nav-link').forEach(n => n.classList.remove('active'));
             evt.currentTarget.classList.add('active');
         }
         qsa('.content-card').forEach(c => c.classList.remove('active'));
         const target = document.getElementById(sectionName);
-        if (target) target.classList.add('active');
-    };
-
-    // ==================== NGO REQUEST FIELD TOGGLING ====================
-    window.toggleNGOFields = function (requestType) {
-        const financialField = document.getElementById('financialField');
-        const foodField = document.getElementById('foodField');
-        const clothesField = document.getElementById('clothesField');
-        const shelterField = document.getElementById('shelterField');
-
-        // Hide all fields
-        if (financialField) financialField.classList.add('hidden');
-        if (foodField) foodField.classList.add('hidden');
-        if (clothesField) clothesField.classList.add('hidden');
-        if (shelterField) shelterField.classList.add('hidden');
-
-        // Clear required attributes
-        const financialInput = document.getElementById('RequestedAmountInput');
-        const foodInput = document.getElementById('FoodQuantityInput');
-        const maleClothesInput = document.getElementById('MaleClothesQtyInput');
-        const femaleClothesInput = document.getElementById('FemaleClothesQtyInput');
-        const kidsClothesInput = document.getElementById('KidsClothesQtyInput');
-        const shelterInput = document.getElementById('ShelterBedsInput');
-
-        if (financialInput) financialInput.removeAttribute('required');
-        if (foodInput) foodInput.removeAttribute('required');
-        if (maleClothesInput) maleClothesInput.removeAttribute('required');
-        if (femaleClothesInput) femaleClothesInput.removeAttribute('required');
-        if (kidsClothesInput) kidsClothesInput.removeAttribute('required');
-        if (shelterInput) shelterInput.removeAttribute('required');
-
-        // Show relevant field based on type
-        switch (requestType) {
-            case 'Financial':
-                if (financialField) {
-                    financialField.classList.remove('hidden');
-                    if (financialInput) financialInput.setAttribute('required', 'required');
-                }
-                break;
-            case 'Food':
-                if (foodField) {
-                    foodField.classList.remove('hidden');
-                    if (foodInput) foodInput.setAttribute('required', 'required');
-                }
-                break;
-            case 'Clothes':
-                if (clothesField) {
-                    clothesField.classList.remove('hidden');
-                }
-                break;
-            case 'Shelter':
-                if (shelterField) {
-                    shelterField.classList.remove('hidden');
-                    if (shelterInput) shelterInput.setAttribute('required', 'required');
-                }
-                break;
+        if (target) {
+            target.classList.add('active');
+            sessionStorage.setItem('adminActiveTab', sectionName);
         }
     };
 
-    // ==================== SUCCESS ANIMATIONS ====================
-    function createConfetti(colors = null) {
+    // ==================== ANIMATIONS ====================
+    function createConfetti(colors) {
         const defaultColors = ['#667eea', '#764ba2', '#98a0f8', '#8a6ab8', '#7f8ff1', '#28a745'];
         const confettiColors = colors || defaultColors;
 
         for (let i = 0; i < 50; i++) {
             const c = document.createElement('div');
-            c.style.position = 'fixed';
-            c.style.left = (Math.random() * 100) + '%';
-            c.style.top = '-10px';
-            c.style.width = '8px';
-            c.style.height = '12px';
-            c.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-            c.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
-            c.style.opacity = '0.95';
-            c.style.zIndex = '99999';
-            c.style.borderRadius = '2px';
-            c.style.pointerEvents = 'none';
-
-            const duration = 2 + Math.random() * 2;
-            const delay = Math.random() * 0.5;
-            c.style.animation = `fall ${duration}s linear ${delay}s forwards`;
-
+            Object.assign(c.style, {
+                position: 'fixed',
+                left: (Math.random() * 100) + '%',
+                top: '-10px',
+                width: '8px',
+                height: '12px',
+                background: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                transform: 'rotate(' + (Math.random() * 360) + 'deg)',
+                opacity: '0.95',
+                zIndex: '99999',
+                borderRadius: '2px',
+                pointerEvents: 'none',
+                animation: `fall ${2 + Math.random() * 2}s linear ${Math.random() * 0.5}s forwards`
+            });
             document.body.appendChild(c);
-
-            setTimeout(() => c.remove(), (duration + delay) * 1000 + 100);
+            setTimeout(() => c.remove(), 5000);
         }
     }
 
-    window.showSuccessAnimation = function (type) {
-        const overlay = document.createElement('div');
-        overlay.style.position = 'fixed';
-        overlay.style.inset = '0';
-        overlay.style.background = 'rgba(0,0,0,0.7)';
-        overlay.style.zIndex = '99998';
-        overlay.style.backdropFilter = 'blur(4px)';
-        document.body.appendChild(overlay);
-
-        const box = document.createElement('div');
-        box.style.position = 'fixed';
-        box.style.left = '50%';
-        box.style.top = '50%';
-        box.style.transform = 'translate(-50%,-50%) scale(0.8)';
-        box.style.zIndex = '99999';
-        box.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        box.style.padding = '50px';
-        box.style.borderRadius = '20px';
-        box.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-        box.style.boxShadow = '0 20px 60px rgba(102, 126, 234, 0.5)';
-        box.style.textAlign = 'center';
-        box.style.minWidth = '350px';
-        box.style.animation = 'popIn 0.3s ease-out forwards';
-
-        const emoji = type === 'food' ? '🍲' : type === 'clothes' ? '👕' : type === 'loan' ? '💰' : '🏠';
-        const typeCapitalized = type.charAt(0).toUpperCase() + type.slice(1);
-
-        box.innerHTML = `
-            <div style="font-size: 64px; margin-bottom: 20px; animation: bounce 0.6s ease-in-out;">${emoji}</div>
-            <h2 style="color: white; margin: 0 0 15px 0; font-size: 28px; font-weight: 600;">Request Fulfilled!</h2>
-            <p style="color: rgba(255,255,255,0.95); font-size: 16px; line-height: 1.6; margin: 0;">The ${typeCapitalized} request has been successfully fulfilled. Resources have been allocated! ✅</p>
-        `;
-
-        document.body.appendChild(box);
-
-        setTimeout(() => createConfetti(), 100);
-
-        setTimeout(() => {
-            box.style.animation = 'popOut 0.3s ease-in forwards';
-            setTimeout(() => {
-                box.remove();
-                overlay.remove();
-            }, 300);
-        }, 3000);
-    };
-
-    // Generic action animation with color theming
     window.showActionSuccessAnimation = function (emoji, title, message, actionType = 'success') {
-        const overlay = document.createElement('div');
-        overlay.style.position = 'fixed';
-        overlay.style.inset = '0';
-        overlay.style.background = 'rgba(0,0,0,0.7)';
-        overlay.style.zIndex = '99998';
-        overlay.style.backdropFilter = 'blur(4px)';
-        document.body.appendChild(overlay);
+        console.log('🎬 Showing animation:', { emoji, title, message, actionType });
 
-        // Color schemes based on action type
-        let gradient, shadowColor, confettiColors;
-        switch (actionType) {
-            case 'danger':
-            case 'reject':
-            case 'cancel':
-            case 'deactivate':
-            case 'unverify':
-                gradient = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
-                shadowColor = 'rgba(220, 53, 69, 0.5)';
-                confettiColors = ['#dc3545', '#c82333', '#ff6b6b', '#ee5a6f', '#bd2130'];
-                break;
-            case 'warning':
-                gradient = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
-                shadowColor = 'rgba(255, 193, 7, 0.5)';
-                confettiColors = ['#ffc107', '#ff9800', '#ffca28', '#ffa726', '#f57c00'];
-                break;
-            case 'success':
-            case 'approve':
-            case 'verify':
-            case 'activate':
-            default:
-                gradient = 'linear-gradient(135deg, #28a745 0%, #218838 100%)';
-                shadowColor = 'rgba(40, 167, 69, 0.5)';
-                confettiColors = ['#28a745', '#218838', '#48c774', '#5cb85c', '#1e7e34'];
-                break;
-        }
+        const colors = {
+            deactivate: {
+                gradient: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                confetti: ['#dc3545', '#c82333', '#ff6b6b']
+            },
+            activate: {
+                gradient: 'linear-gradient(135deg, #28a745 0%, #218838 100%)',
+                confetti: ['#28a745', '#218838', '#48c774']
+            }
+        };
+        const theme = colors[actionType] || colors.activate;
+
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed',
+            inset: '0',
+            background: 'rgba(0,0,0,0.7)',
+            zIndex: '99998',
+            backdropFilter: 'blur(4px)'
+        });
 
         const box = document.createElement('div');
-        box.style.position = 'fixed';
-        box.style.left = '50%';
-        box.style.top = '50%';
-        box.style.transform = 'translate(-50%,-50%) scale(0.8)';
-        box.style.zIndex = '99999';
-        box.style.background = gradient;
-        box.style.padding = '50px';
-        box.style.borderRadius = '20px';
-        box.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-        box.style.boxShadow = `0 20px 60px ${shadowColor}`;
-        box.style.textAlign = 'center';
-        box.style.minWidth = '350px';
-        box.style.animation = 'popIn 0.3s ease-out forwards';
+        Object.assign(box.style, {
+            position: 'fixed',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%,-50%) scale(0.8)',
+            zIndex: '99999',
+            background: theme.gradient,
+            padding: '50px',
+            borderRadius: '20px',
+            textAlign: 'center',
+            minWidth: '350px',
+            animation: 'popIn 0.3s ease-out forwards'
+        });
 
         box.innerHTML = `
             <div style="font-size: 64px; margin-bottom: 20px; animation: bounce 0.6s ease-in-out;">${emoji}</div>
-            <h2 style="color: white; margin: 0 0 15px 0; font-size: 28px; font-weight: 600;">${title}</h2>
-            <p style="color: rgba(255,255,255,0.95); font-size: 16px; line-height: 1.6; margin: 0;">${message}</p>
+            <h2 style="color: white; margin: 0 0 15px 0; font-size: 28px;">${title}</h2>
+            <p style="color: rgba(255,255,255,0.95); font-size: 16px;">${message}</p>
         `;
 
+        document.body.appendChild(overlay);
         document.body.appendChild(box);
-
-        setTimeout(() => createConfetti(confettiColors), 100);
+        setTimeout(() => createConfetti(theme.confetti), 100);
 
         setTimeout(() => {
             box.style.animation = 'popOut 0.3s ease-in forwards';
@@ -228,271 +229,45 @@
         }, 2500);
     };
 
-    // ==================== APPROVE REQUEST ====================
-    window.approveRequest = function (requestId) {
-        console.log('📝 Approve Request called with ID:', requestId);
-        const form = document.getElementById('approveForm');
-        console.log('Form found:', form);
-
-        showConfirmModal(
-            '✓ Approve Request',
-            'Are you sure you want to approve this request? This will move the request to approved status and allow fulfillment.',
-            function () {
-                console.log('✅ Confirmed - Submitting form');
-                const input = document.getElementById('approveRequestId');
-                console.log('Input found:', input);
-                input.value = requestId;
-                console.log('Set input value to:', requestId);
-
-                showActionSuccessAnimation('✅', 'Request Approved!', 'The request has been approved successfully! You can now fulfill it.', 'approve');
-
-                setTimeout(() => {
-                    form.submit();
-                }, 2500);
-            }
-        );
-    };
-
-    // ==================== REJECT REQUEST ====================
-    window.rejectRequest = function (requestId) {
-        console.log('❌ Reject Request called with ID:', requestId);
-
-        showInputModal(
-            '✗ Reject Request',
-            'Please provide a reason for rejecting this request:',
-            'Enter rejection reason...',
-            function (reason) {
-                console.log('Rejection reason:', reason);
-                if (reason && reason.trim() !== '') {
-                    console.log('✅ Valid reason - Submitting form');
-                    document.getElementById('rejectRequestId').value = requestId;
-                    document.getElementById('rejectReason').value = reason;
-
-                    showActionSuccessAnimation('❌', 'Request Rejected', 'The request has been rejected with your reason.', 'reject');
-
-                    setTimeout(() => {
-                        document.getElementById('rejectForm').submit();
-                    }, 2500);
-                } else {
-                    console.log('⚠️ Invalid reason');
-                    showAlertModal('⚠️ Required', 'Please provide a rejection reason.');
-                }
-            }
-        );
-    };
-
-    // ==================== FULFILL REQUEST ====================
-    window.fulfillRequest = function (requestId, canFulfill) {
-        console.log('🎁 Fulfill Request called with ID:', requestId, 'Can Fulfill:', canFulfill);
-
-        if (!canFulfill) {
-            console.log('⚠️ Cannot fulfill - insufficient resources');
-            showAlertModal(
-                '⚠️ Insufficient Resources',
-                'Cannot fulfill this request due to insufficient resources. Please check inventory levels and try again.'
-            );
-            return;
-        }
-
-        showConfirmModal(
-            '🎁 Fulfill Request',
-            'Are you sure you want to fulfill this request? ' +
-            '✓ This will deduct resources from inventory ' +
-            '✓ The receiver will be notified ' +
-            '✓ This action cannot be undone',
-            function () {
-                console.log('✅ Confirmed - Submitting form');
-                document.getElementById('fulfillRequestId').value = requestId;
-                document.getElementById('fulfillForm').submit();
-                console.log('Form submitted');
-            }
-        );
-    };
-
-    // ==================== USER MANAGEMENT ====================
-    window.toggleUserStatus = function (userId, isActive) {
-        const action = isActive ? 'deactivate' : 'activate';
-        const actionText = isActive ? 'Deactivate' : 'Activate';
-
-        showConfirmModal(
-            `🔄 ${actionText} User`,
-            `Are you sure you want to ${action} this user's account?`,
-            function () {
-                if (isActive) {
-                    // Deactivating user - RED
-                    showActionSuccessAnimation('🚫', 'User Deactivated!', 'The user account has been deactivated successfully!', 'deactivate');
-                } else {
-                    // Activating user - GREEN
-                    showActionSuccessAnimation('✅', 'User Activated!', 'The user account has been activated successfully!', 'activate');
-                }
-
-                setTimeout(() => {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/Admin/ToggleUserStatus';
-
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'userId';
-                    input.value = userId;
-                    form.appendChild(input);
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }, 2500);
-            }
-        );
-    };
-
-    // ==================== NGO MANAGEMENT ====================
-    window.toggleNGOStatus = function (ngoId, isActive) {
-        const action = isActive ? 'deactivate' : 'activate';
-        const actionText = isActive ? 'Deactivate' : 'Activate';
-
-        showConfirmModal(
-            `🔄 ${actionText} NGO`,
-            `Are you sure you want to ${action} this NGO's account?`,
-            function () {
-                if (isActive) {
-                    // Deactivating NGO - RED
-                    showActionSuccessAnimation('🚫', 'NGO Deactivated!', 'The NGO account has been deactivated successfully!', 'deactivate');
-                } else {
-                    // Activating NGO - GREEN
-                    showActionSuccessAnimation('✅', 'NGO Activated!', 'The NGO account has been activated successfully!', 'activate');
-                }
-
-                setTimeout(() => {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/Admin/ToggleNGOStatus';
-
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'ngoId';
-                    input.value = ngoId;
-                    form.appendChild(input);
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }, 2500);
-            }
-        );
-    };
-
-    window.verifyNGO = function (ngoId, isVerified) {
-        const action = isVerified ? 'unverify' : 'verify';
-        const actionText = isVerified ? 'Unverify' : 'Verify';
-
-        showConfirmModal(
-            `✓ ${actionText} NGO`,
-            `Are you sure you want to ${action} this NGO?`,
-            function () {
-                if (isVerified) {
-                    // Unverifying NGO - RED
-                    showActionSuccessAnimation('⚠️', 'NGO Unverified!', 'The NGO verification has been removed.', 'unverify');
-                } else {
-                    // Verifying NGO - GREEN
-                    showActionSuccessAnimation('✅', 'NGO Verified!', 'The NGO has been successfully verified!', 'verify');
-                }
-
-                setTimeout(() => {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/Admin/VerifyNGO';
-
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'ngoId';
-                    input.value = ngoId;
-                    form.appendChild(input);
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }, 2500);
-            }
-        );
-    };
-
-    // ==================== NGO REQUEST MANAGEMENT ====================
-    window.cancelNGORequest = function (requestId) {
-        showConfirmModal(
-            '❌ Cancel NGO Request',
-            'Are you sure you want to cancel this request? This action cannot be undone.',
-            function () {
-                showActionSuccessAnimation('🚫', 'Request Cancelled!', 'The NGO request has been cancelled successfully!', 'cancel');
-
-                setTimeout(() => {
-                    const form = document.getElementById('cancelForm');
-                    if (form) {
-                        document.getElementById('cancelReqId').value = requestId;
-                        form.submit();
-                    }
-                }, 2500);
-            }
-        );
-    };
-
-    // Store functions for Part 2
-    window._adminDashboard = {
-        qs: qs,
-        qsa: qsa,
-        createConfetti: createConfetti
-    };
-
-// END OF PART 1 - Continue with Part 2 below
-    // AdminDashboard.js - Part 2: Modals, Tables, and Initialization
-    // MERGE INSTRUCTION: Place this BELOW Part 1 in your JavaScript file
-
-    // ==================== MODAL HANDLING ====================
-    function initModals() {
-        const modals = window._adminDashboard.qsa('[id$="Modal"]');
-        modals.forEach(modal => {
-            modal.addEventListener('click', function (e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && modal.style.display === 'flex') {
-                    modal.style.display = 'none';
-                }
-            });
-        });
+    // ==================== MODALS ====================
+    function createModalOverlay() {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-modal-overlay';
+        return overlay;
     }
 
-    // ==================== OPEN/CLOSE MODAL FUNCTIONS ====================
-    window.openModal = function (modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'flex';
-        }
-    };
+    function createModalBox(title, message) {
+        const modal = document.createElement('div');
+        modal.className = 'custom-modal-box';
+        modal.innerHTML = `
+            <h3 class="modal-title">${title}</h3>
+            <p class="modal-message">${message}</p>
+        `;
+        return modal;
+    }
 
-    window.closeModal = function (modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    };
+    function closeModalBox(overlay, modal) {
+        overlay.style.opacity = '0';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            overlay.remove();
+            modal.remove();
+        }, 300);
+    }
 
-    // ==================== CUSTOM MODAL SYSTEM ====================
     window.showAlertModal = function (title, message) {
         const overlay = createModalOverlay();
         const modal = createModalBox(title, message);
 
-        const btnContainer = document.createElement('div');
-        btnContainer.className = 'modal-btn-container';
+        const btn = document.createElement('button');
+        btn.className = 'modal-btn modal-btn-primary';
+        btn.textContent = 'OK';
+        btn.onclick = () => closeModalBox(overlay, modal);
 
-        const okBtn = document.createElement('button');
-        okBtn.className = 'modal-btn modal-btn-primary';
-        okBtn.textContent = 'OK';
-        okBtn.onclick = function () {
-            closeModalBox(overlay, modal);
-        };
-
-        btnContainer.appendChild(okBtn);
-        modal.appendChild(btnContainer);
+        const container = document.createElement('div');
+        container.className = 'modal-btn-container';
+        container.appendChild(btn);
+        modal.appendChild(container);
 
         document.body.appendChild(overlay);
         document.body.appendChild(modal);
@@ -507,28 +282,25 @@
     window.showConfirmModal = function (title, message, onConfirm) {
         const overlay = createModalOverlay();
         const modal = createModalBox(title, message);
-
-        const btnContainer = document.createElement('div');
-        btnContainer.className = 'modal-btn-container';
+        const container = document.createElement('div');
+        container.className = 'modal-btn-container';
 
         const cancelBtn = document.createElement('button');
         cancelBtn.className = 'modal-btn modal-btn-secondary';
         cancelBtn.textContent = 'Cancel';
-        cancelBtn.onclick = function () {
-            closeModalBox(overlay, modal);
-        };
+        cancelBtn.onclick = () => closeModalBox(overlay, modal);
 
         const confirmBtn = document.createElement('button');
         confirmBtn.className = 'modal-btn modal-btn-primary';
         confirmBtn.textContent = 'Confirm';
-        confirmBtn.onclick = function () {
+        confirmBtn.onclick = () => {
             closeModalBox(overlay, modal);
             if (onConfirm) onConfirm();
         };
 
-        btnContainer.appendChild(cancelBtn);
-        btnContainer.appendChild(confirmBtn);
-        modal.appendChild(btnContainer);
+        container.appendChild(cancelBtn);
+        container.appendChild(confirmBtn);
+        modal.appendChild(container);
 
         document.body.appendChild(overlay);
         document.body.appendChild(modal);
@@ -544,39 +316,34 @@
         const overlay = createModalOverlay();
         const modal = createModalBox(title, message);
 
-        const inputContainer = document.createElement('div');
-        inputContainer.style.marginTop = '20px';
-
         const input = document.createElement('textarea');
         input.className = 'modal-input';
         input.placeholder = placeholder;
         input.rows = 4;
-        inputContainer.appendChild(input);
-        modal.appendChild(inputContainer);
+        input.style.marginTop = '20px';
+        modal.appendChild(input);
 
-        const btnContainer = document.createElement('div');
-        btnContainer.className = 'modal-btn-container';
-        btnContainer.style.marginTop = '20px';
+        const container = document.createElement('div');
+        container.className = 'modal-btn-container';
+        container.style.marginTop = '20px';
 
         const cancelBtn = document.createElement('button');
         cancelBtn.className = 'modal-btn modal-btn-secondary';
         cancelBtn.textContent = 'Cancel';
-        cancelBtn.onclick = function () {
-            closeModalBox(overlay, modal);
-        };
+        cancelBtn.onclick = () => closeModalBox(overlay, modal);
 
         const submitBtn = document.createElement('button');
         submitBtn.className = 'modal-btn modal-btn-primary';
         submitBtn.textContent = 'Submit';
-        submitBtn.onclick = function () {
-            const value = input.value.trim();
+        submitBtn.onclick = () => {
+            const val = input.value.trim();
             closeModalBox(overlay, modal);
-            if (onSubmit) onSubmit(value);
+            if (onSubmit) onSubmit(val);
         };
 
-        btnContainer.appendChild(cancelBtn);
-        btnContainer.appendChild(submitBtn);
-        modal.appendChild(btnContainer);
+        container.appendChild(cancelBtn);
+        container.appendChild(submitBtn);
+        modal.appendChild(container);
 
         document.body.appendChild(overlay);
         document.body.appendChild(modal);
@@ -587,98 +354,172 @@
             modal.style.transform = 'translate(-50%, -50%) scale(1)';
             input.focus();
         }, 10);
+    };
 
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                submitBtn.click();
+// AdminDashboard.js - COMPLETE FIXED VERSION - PART 2
+// CONTINUE FROM PART 1...
+    // ==================== ACTION FUNCTIONS ====================
+    window.approveRequest = function (requestId) {
+        window.showConfirmModal('✓ Approve Request', 'Are you sure you want to approve this request?', () => {
+            document.getElementById('approveRequestId').value = requestId;
+            window.showActionSuccessAnimation('✅', 'Approved!', 'Request approved successfully!', 'activate');
+            setTimeout(() => document.getElementById('approveForm').submit(), 2500);
+        });
+    };
+
+    window.rejectRequest = function (requestId) {
+        window.showInputModal('✗ Reject Request', 'Please provide a reason for rejection:', 'Enter rejection reason...', (reason) => {
+            if (reason) {
+                document.getElementById('rejectRequestId').value = requestId;
+                document.getElementById('rejectReason').value = reason;
+                window.showActionSuccessAnimation('❌', 'Rejected', 'Request has been rejected.', 'deactivate');
+                setTimeout(() => document.getElementById('rejectForm').submit(), 2500);
             }
         });
     };
 
-    function createModalOverlay() {
-        const overlay = document.createElement('div');
-        overlay.className = 'custom-modal-overlay';
-        overlay.onclick = function () { };
-        return overlay;
-    }
-
-    function createModalBox(title, message) {
-        const modal = document.createElement('div');
-        modal.className = 'custom-modal-box';
-
-        const titleEl = document.createElement('h3');
-        titleEl.className = 'modal-title';
-        titleEl.innerHTML = title;
-
-        const messageEl = document.createElement('p');
-        messageEl.className = 'modal-message';
-        messageEl.innerHTML = message;
-
-        modal.appendChild(titleEl);
-        modal.appendChild(messageEl);
-
-        return modal;
-    }
-
-    function closeModalBox(overlay, modal) {
-        overlay.style.opacity = '0';
-        modal.style.opacity = '0';
-        modal.style.transform = 'translate(-50%, -50%) scale(0.9)';
-        setTimeout(() => {
-            overlay.remove();
-            modal.remove();
-        }, 300);
-    }
-
-    // ==================== TABLE ENHANCEMENTS ====================
-    function enhanceTables() {
-        const tables = window._adminDashboard.qsa('.history-table tbody tr');
-        tables.forEach((row, index) => {
-            row.style.animationDelay = `${index * 0.05}s`;
-            row.style.animation = 'fadeInRow 0.3s ease-out forwards';
+    window.fulfillRequest = function (requestId, canFulfill) {
+        if (!canFulfill) {
+            window.showAlertModal('⚠️ Error', 'Insufficient resources to fulfill this request.');
+            return;
+        }
+        window.showConfirmModal('🎁 Fulfill Request', 'Are you sure you want to fulfill this request?', () => {
+            document.getElementById('fulfillRequestId').value = requestId;
+            document.getElementById('fulfillForm').submit();
         });
-    }
+    };
 
-    // ==================== QUICK ACTIONS ON HOME TAB ====================
-    function initQuickActions() {
-        const qs = window._adminDashboard.qs;
-        const qsa = window._adminDashboard.qsa;
+    window.toggleUserStatus = function (userId, isActive) {
+        const action = isActive ? 'Deactivate' : 'Activate';
+        window.showConfirmModal(
+            `🔄 ${action} User`,
+            `Are you sure you want to ${action.toLowerCase()} this user?`,
+            () => {
+                window.showActionSuccessAnimation(
+                    isActive ? '🚫' : '✅',
+                    isActive ? 'Deactivated!' : 'Activated!',
+                    `User has been ${isActive ? 'deactivated' : 'activated'} successfully.`,
+                    isActive ? 'deactivate' : 'activate'
+                );
+                setTimeout(() => {
+                    const f = document.createElement('form');
+                    f.method = 'POST';
+                    f.action = '/Admin/ToggleUserStatus';
+                    const i = document.createElement('input');
+                    i.type = 'hidden';
+                    i.name = 'userId';
+                    i.value = userId;
+                    f.appendChild(i);
+                    document.body.appendChild(f);
+                    f.submit();
+                }, 2500);
+            }
+        );
+    };
 
-        const actionCards = qsa('.action-card');
-        actionCards.forEach(card => {
-            card.addEventListener('click', function () {
-                let sectionName = '';
-                if (this.classList.contains('card-requests')) {
-                    sectionName = 'requests';
-                } else if (this.classList.contains('card-users')) {
-                    sectionName = 'users';
-                } else if (this.classList.contains('card-ngos')) {
-                    sectionName = 'ngos';
-                } else if (this.classList.contains('card-admins')) {
-                    sectionName = 'admins';
-                } else if (this.classList.contains('card-transactions')) {
-                    sectionName = 'transactions';
-                } else if (this.classList.contains('card-donations')) {
-                    sectionName = 'donations';
-                } else if (this.classList.contains('card-ngo-requests')) {
-                    sectionName = 'ngo-requests';
-                }
+    window.toggleNGOStatus = function (ngoId, isActive) {
+        const action = isActive ? 'Deactivate' : 'Activate';
+        window.showConfirmModal(
+            `🔄 ${action} NGO`,
+            `Are you sure you want to ${action.toLowerCase()} this NGO?`,
+            () => {
+                window.showActionSuccessAnimation(
+                    isActive ? '🚫' : '✅',
+                    isActive ? 'Deactivated!' : 'Activated!',
+                    `NGO has been ${isActive ? 'deactivated' : 'activated'} successfully.`,
+                    isActive ? 'deactivate' : 'activate'
+                );
+                setTimeout(() => {
+                    const f = document.createElement('form');
+                    f.method = 'POST';
+                    f.action = '/Admin/ToggleNGOStatus';
+                    const i = document.createElement('input');
+                    i.type = 'hidden';
+                    i.name = 'ngoId';
+                    i.value = ngoId;
+                    f.appendChild(i);
+                    document.body.appendChild(f);
+                    f.submit();
+                }, 2500);
+            }
+        );
+    };
 
-                if (sectionName) {
-                    qsa('.nav-link').forEach(n => n.classList.remove('active'));
-                    const navLink = qs(`.nav-link[onclick*="${sectionName}"]`);
-                    if (navLink) navLink.classList.add('active');
+    window.verifyNGO = function (ngoId, isVerified) {
+        const action = isVerified ? 'Unverify' : 'Verify';
+        window.showConfirmModal(
+            `✓ ${action} NGO`,
+            `Are you sure you want to ${action.toLowerCase()} this NGO?`,
+            () => {
+                window.showActionSuccessAnimation(
+                    isVerified ? '⚠️' : '✅',
+                    isVerified ? 'Unverified!' : 'Verified!',
+                    `NGO has been ${isVerified ? 'unverified' : 'verified'} successfully.`,
+                    isVerified ? 'deactivate' : 'activate'
+                );
+                setTimeout(() => {
+                    const f = document.createElement('form');
+                    f.method = 'POST';
+                    f.action = '/Admin/VerifyNGO';
+                    const i = document.createElement('input');
+                    i.type = 'hidden';
+                    i.name = 'ngoId';
+                    i.value = ngoId;
+                    f.appendChild(i);
+                    document.body.appendChild(f);
+                    f.submit();
+                }, 2500);
+            }
+        );
+    };
 
-                    qsa('.content-card').forEach(c => c.classList.remove('active'));
-                    const target = document.getElementById(sectionName);
-                    if (target) target.classList.add('active');
-                }
+    window.cancelNGORequest = function (requestId) {
+        window.showConfirmModal(
+            '❌ Cancel Request',
+            'Are you sure you want to cancel this NGO request?',
+            () => {
+                document.getElementById('cancelReqId').value = requestId;
+                window.showActionSuccessAnimation('🚫', 'Cancelled!', 'Request has been cancelled.', 'deactivate');
+                setTimeout(() => document.getElementById('cancelForm').submit(), 2500);
+            }
+        );
+    };
+
+    window.toggleNGOFields = function (type) {
+        ['financialField', 'foodField', 'clothesField', 'shelterField'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
+        const fieldMap = {
+            Financial: 'financialField',
+            Food: 'foodField',
+            Clothes: 'clothesField',
+            Shelter: 'shelterField'
+        };
+
+        const target = document.getElementById(fieldMap[type]);
+        if (target) target.classList.remove('hidden');
+    };
+
+    window.openModal = function (id) {
+        const m = document.getElementById(id);
+        if (m) m.style.display = 'flex';
+    };
+
+    window.closeModal = function (id) {
+        const m = document.getElementById(id);
+        if (m) {
+            m.style.display = 'none';
+            const form = m.querySelector('form');
+            if (form) form.reset();
+            ['financialField', 'foodField', 'clothesField', 'shelterField'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) field.classList.add('hidden');
             });
-        });
-    }
+        }
+    };
 
-    // ==================== SEARCH FUNCTIONALITY ====================
     window.searchTable = function (inputId, tableId) {
         const input = document.getElementById(inputId);
         const table = document.getElementById(tableId);
@@ -688,58 +529,93 @@
         const rows = table.getElementsByTagName('tr');
 
         for (let i = 1; i < rows.length; i++) {
-            const row = rows[i];
-            const cells = row.getElementsByTagName('td');
+            const cells = rows[i].getElementsByTagName('td');
             let found = false;
-
             for (let j = 0; j < cells.length; j++) {
-                const cellText = cells[j].textContent || cells[j].innerText;
-                if (cellText.toLowerCase().indexOf(filter) > -1) {
+                if ((cells[j].textContent || '').toLowerCase().indexOf(filter) > -1) {
                     found = true;
                     break;
                 }
             }
-
-            row.style.display = found ? '' : 'none';
+            rows[i].style.display = found ? '' : 'none';
         }
     };
 
-    // ==================== STATISTICS UPDATE ====================
-    function updateStatistics() {
-        const statNumbers = window._adminDashboard.qsa('.stat-number');
-        statNumbers.forEach(stat => {
-            stat.style.animation = 'pulse 2s ease-in-out infinite';
-        });
-    }
-
-    // ==================== FORM SUBMISSION ANIMATIONS ====================
+    // ==================== FORM SUBMISSION ====================
     document.addEventListener('submit', function (e) {
         const form = e.target;
 
-        // Add NGO Form
+        console.log('🔍 Form submit detected:', form.action);
+
         if (form.action && form.action.includes('/Admin/AddNGO')) {
             e.preventDefault();
-            window._adminDashboard.saveCurrentTab();
-            showActionSuccessAnimation('🏢', 'NGO Added!', 'The new NGO has been added and verified successfully!', 'activate');
-            setTimeout(() => form.submit(), 2500);
+            console.log('📝 Adding NGO...');
+
+            if (!form.checkValidity()) {
+                console.log('❌ Form validation failed');
+                form.reportValidity();
+                return;
+            }
+
+            const formData = new FormData(form);
+            console.log('📦 Form data:', {
+                NgoId: formData.get('NgoId'),
+                OrganizationName: formData.get('OrganizationName'),
+                Email: formData.get('Email')
+            });
+
+            if (!validateNGOForm(formData)) {
+                console.log('❌ Custom validation failed');
+                return;
+            }
+
+            console.log('✅ Validation passed, submitting...');
+            saveCurrentTab();
+            sessionStorage.setItem('pendingAnimation', 'addNGO');
+            form.submit();
         }
-        // Add Admin Form
         else if (form.action && form.action.includes('/Admin/AddAdmin')) {
             e.preventDefault();
-            window._adminDashboard.saveCurrentTab();
-            showActionSuccessAnimation('👨‍💼', 'Admin Added!', 'The new administrator has been added successfully!', 'activate');
-            setTimeout(() => form.submit(), 2500);
+            console.log('📝 Adding Admin...');
+
+            if (!form.checkValidity()) {
+                console.log('❌ Form validation failed');
+                form.reportValidity();
+                return;
+            }
+
+            const formData = new FormData(form);
+            console.log('📦 Form data:', {
+                AdminId: formData.get('AdminId'),
+                FullName: formData.get('FullName')
+            });
+
+            if (!validateAdminForm(formData)) {
+                console.log('❌ Custom validation failed');
+                return;
+            }
+
+            console.log('✅ Validation passed, submitting...');
+            saveCurrentTab();
+            sessionStorage.setItem('pendingAnimation', 'addAdmin');
+            form.submit();
         }
-        // Create NGO Request Form
         else if (form.action && form.action.includes('/Admin/CreateNGORequest')) {
             e.preventDefault();
-            window._adminDashboard.saveCurrentTab();
-            showActionSuccessAnimation('📤', 'Request Sent!', 'Your support request has been sent to the NGO successfully!', 'success');
-            setTimeout(() => form.submit(), 2500);
+            console.log('📝 Creating NGO Request...');
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            saveCurrentTab();
+            sessionStorage.setItem('pendingAnimation', 'createRequest');
+            form.submit();
         }
     });
 
-    // ==================== ANIMATIONS ====================
+    // ==================== CSS ====================
     const style = document.createElement('style');
     style.textContent = `
         @keyframes fall {
@@ -748,7 +624,6 @@
                 opacity: 0;
             }
         }
-
         @keyframes popIn {
             from {
                 opacity: 0;
@@ -759,7 +634,6 @@
                 transform: translate(-50%, -50%) scale(1);
             }
         }
-
         @keyframes popOut {
             from {
                 opacity: 1;
@@ -770,7 +644,6 @@
                 transform: translate(-50%, -50%) scale(0.8);
             }
         }
-
         @keyframes bounce {
             0%, 100% {
                 transform: translateY(0);
@@ -779,38 +652,74 @@
                 transform: translateY(-20px);
             }
         }
-
-        @keyframes fadeInRow {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .custom-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 99998;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
+        .custom-modal-box {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 99999;
+            min-width: 400px;
+            max-width: 90%;
+            opacity: 0;
+            transition: all 0.3s;
         }
-
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            color: #333;
         }
-
+        .modal-message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+            margin: 0;
+        }
+        .modal-btn-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .modal-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .modal-btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
         .modal-input {
             width: 100%;
             padding: 12px 16px;
@@ -818,51 +727,109 @@
             border-radius: 12px;
             font-size: 15px;
             font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             background: white;
             resize: vertical;
         }
-
         .modal-input:focus {
             outline: none;
-            border-color: var(--accent-start, #667eea);
+            border-color: #667eea;
             box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+        }
+        .hidden {
+            display: none !important;
+        }
+        
+        .alert, .alert-success, .alert-danger, .alert-error, .alert-warning, .alert-info {
+            display: none !important;
         }
     `;
     document.head.appendChild(style);
 
-    // ==================== INITIALIZATION ====================
+    // ==================== INIT ====================
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('🚀 Admin Dashboard JS Loaded');
-        console.log('✓ Checking forms...');
-        console.log('Approve Form:', document.getElementById('approveForm'));
-        console.log('Reject Form:', document.getElementById('rejectForm'));
-        console.log('Fulfill Form:', document.getElementById('fulfillForm'));
+        console.log('📄 DOM Content Loaded');
 
-        initModals();
-        enhanceTables();
-        initQuickActions();
-        updateStatistics();
+        restoreActiveTab();
 
-        // Restore the active tab after page reload
-        window._adminDashboard.restoreActiveTab();
-
-        const justFulfilled = document.querySelector('[data-just-fulfilled]');
-        if (justFulfilled) {
-            const type = justFulfilled.getAttribute('data-just-fulfilled');
-            setTimeout(() => showSuccessAnimation(type), 300);
-        }
-
-        const alerts = window._adminDashboard.qsa('.alert');
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                alert.style.animation = 'slideOut 0.3s ease-out forwards';
-                setTimeout(() => alert.remove(), 300);
-            }, 5000);
+        qsa('[id$="Modal"]').forEach(m => {
+            m.addEventListener('click', (e) => {
+                if (e.target === m) {
+                    m.style.display = 'none';
+                }
+            });
         });
 
-        console.log('✅ Admin Dashboard initialized successfully');
+        const ngoRequestModal = document.getElementById('ngoRequestModal');
+        if (ngoRequestModal) {
+            ngoRequestModal.addEventListener('click', (e) => {
+                if (e.target === ngoRequestModal) {
+                    window.closeModal('ngoRequestModal');
+                }
+            });
+        }
+
+        const pendingAnimation = sessionStorage.getItem('pendingAnimation');
+        console.log('🎬 Pending animation:', pendingAnimation);
+
+        if (pendingAnimation) {
+            sessionStorage.removeItem('pendingAnimation');
+
+            const tempDataSuccess = document.querySelector('[data-success-message]');
+            const tempDataError = document.querySelector('[data-error-type]');
+
+            console.log('📊 TempData markers:', {
+                success: tempDataSuccess?.dataset.successMessage,
+                errorType: tempDataError?.dataset.errorType,
+                errorMessage: tempDataError?.dataset.errorMessage
+            });
+
+            setTimeout(() => {
+                if (pendingAnimation === 'addNGO') {
+                    if (tempDataSuccess) {
+                        console.log('✅ Showing NGO success animation');
+                        window.showActionSuccessAnimation('🏢', 'NGO Added!', 'NGO has been added successfully!', 'activate');
+                    } else if (tempDataError) {
+                        const errorType = tempDataError.dataset.errorType;
+                        const errorMsg = tempDataError.dataset.errorMessage || '';
+
+                        console.log('❌ NGO Error detected:', errorType, errorMsg);
+
+                        if (errorType === 'NGO_ID_EXISTS') {
+                            window.showActionSuccessAnimation('🆔', 'ID Already Exists!', errorMsg, 'deactivate');
+                        } else if (errorType === 'NGO_EMAIL_EXISTS') {
+                            window.showActionSuccessAnimation('📧', 'Email Already Exists!', errorMsg, 'deactivate');
+                        } else {
+                            window.showActionSuccessAnimation('❌', 'Error!', errorMsg, 'deactivate');
+                        }
+                    } else {
+                        console.log('⚠️ No TempData found for NGO operation');
+                    }
+                } else if (pendingAnimation === 'addAdmin') {
+                    if (tempDataSuccess) {
+                        console.log('✅ Showing Admin success animation');
+                        window.showActionSuccessAnimation('👨‍💼', 'Admin Added!', 'Administrator has been added successfully!', 'activate');
+                    } else if (tempDataError) {
+                        const errorMsg = tempDataError.dataset.errorMessage || 'Failed to add admin.';
+                        console.log('❌ Showing Admin error animation:', errorMsg);
+                        window.showActionSuccessAnimation('❌', 'Error!', errorMsg, 'deactivate');
+                    } else {
+                        console.log('⚠️ No TempData found for Admin operation');
+                    }
+                } else if (pendingAnimation === 'createRequest') {
+                    if (tempDataSuccess) {
+                        console.log('✅ Showing Request success animation');
+                        window.showActionSuccessAnimation('📤', 'Request Sent!', 'Request has been sent to NGO successfully!', 'activate');
+                    } else if (tempDataError) {
+                        const errorMsg = tempDataError.dataset.errorMessage || 'Failed to send request.';
+                        console.log('❌ Showing Request error animation');
+                        window.showActionSuccessAnimation('❌', 'Error!', errorMsg, 'deactivate');
+                    }
+                }
+            }, 300);
+        }
     });
 
 })();
-// END OF PART 2
+
+console.log('✅ AdminDashboard.js fully loaded');
