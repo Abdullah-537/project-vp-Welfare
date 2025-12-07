@@ -2,7 +2,7 @@
     <h2 class="content-title">Request Clothes Assistance</h2>
     <form action="@Url.Action("RequestClothes", "Receiver")" method="post" class="request-form" id="clothesRequestForm">
         <div class="form-group">
-            <label>Male Clothes</label>
+            <label class="label-male">Male Clothes</label>
             <div class="quantity-input">
                 <button type="button" class="male-qty-minus">-</button>
                 <input type="number" name="MaleQuantity" id="maleClothes" value="0" min="0" />
@@ -12,7 +12,7 @@
         </div>
 
         <div class="form-group">
-            <label>Female Clothes</label>
+            <label class="label-female">Female Clothes</label>
             <div class="quantity-input">
                 <button type="button" class="female-qty-minus">-</button>
                 <input type="number" name="FemaleQuantity" id="femaleClothes" value="0" min="0" />
@@ -22,7 +22,7 @@
         </div>
 
         <div class="form-group">
-            <label>Kids Clothes</label>
+            <label class="label-kids">Kids Clothes</label>
             <div class="quantity-input">
                 <button type="button" class="kids-qty-minus">-</button>
                 <input type="number" name="KidsQuantity" id="kidsClothes" value="0" min="0" />
@@ -32,7 +32,7 @@
         </div>
 
         <div class="form-group">
-            <label>Clothes Type *</label>
+            <label class="label-type">Clothes Type *</label>
             <select name="ClothesType" id="clothesType" required>
                 <option value="">Select Type</option>
                 <option value="Winter">Winter</option>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="form-group">
-            <label>Additional Details (Optional)</label>
+            <label class="label-description">Additional Details (Optional)</label>
             <textarea name="Description" rows="3" placeholder="Specify sizes or any special requirements..."></textarea>
         </div>
 
