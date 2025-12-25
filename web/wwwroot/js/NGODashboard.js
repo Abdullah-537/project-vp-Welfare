@@ -1,5 +1,4 @@
-﻿// NGODashboard.js - Complete with Fixed Animations
-
+﻿
 (function () {
     'use strict';
 

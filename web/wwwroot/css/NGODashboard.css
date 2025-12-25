@@ -510,7 +510,7 @@ html, body {
     font-weight: 500;
 }
 
-/* ✅ COLORFUL DONATION CARDS - ENHANCED VISIBILITY */
+/*  COLORFUL DONATION CARDS - ENHANCED VISIBILITY */
 .card-donate-money {
     background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%) !important;
     color: white !important;
@@ -1088,7 +1088,7 @@ textarea {
 }
 
 /* ============================================================
-   ABOUT PAGE STYLES - ENHANCED & ENGAGING
+   ABOUT PAGE STYLES 
    ============================================================ */
 .about-header {
     text-align: center;

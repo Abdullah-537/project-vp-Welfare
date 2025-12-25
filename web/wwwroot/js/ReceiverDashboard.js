@@ -1,5 +1,4 @@
-﻿// ReceiverDashboard.js - Complete UI behavior with Green Theme
-(function () {
+﻿(function () {
     'use strict';
 
     function qs(sel) { return document.querySelector(sel); }

@@ -1,4 +1,4 @@
-﻿// AdminDashboard.js - COMPLETE FIXED VERSION - PART 1 - WITH DIAGNOSTICS
+﻿
 
 (function () {
     'use strict';
@@ -356,8 +356,7 @@
         }, 10);
     };
 
-// AdminDashboard.js - COMPLETE FIXED VERSION - PART 2
-// CONTINUE FROM PART 1...
+
     // ==================== ACTION FUNCTIONS ====================
     window.approveRequest = function (requestId) {
         window.showConfirmModal('✓ Approve Request', 'Are you sure you want to approve this request?', () => {

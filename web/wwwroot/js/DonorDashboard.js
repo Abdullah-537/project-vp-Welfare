@@ -1,5 +1,4 @@
-﻿// DonorDashboard.js - Complete UI behavior with Blue Theme
-(function () {
+﻿(function () {
     'use strict';
 
     function qs(sel) { return document.querySelector(sel); }
